@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Electric Social | The Neon Pulse of Events</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "inverse-surface": "#fcf9f8",
+              "outline-variant": "#484847",
+              "inverse-on-surface": "#565555",
+              "on-surface": "#ffffff",
+              "inverse-primary": "#9900d1",
+              "primary-fixed": "#d779ff",
+              "primary-dim": "#b90afc",
+              "on-secondary-fixed-variant": "#9f0059",
+              "background": "#0e0e0e",
+              "tertiary-container": "#2ff801",
+              "surface-tint": "#de8eff",
+              "surface-dim": "#0e0e0e",
+              "primary-container": "#d779ff",
+              "tertiary": "#8eff71",
+              "tertiary-dim": "#2be800",
+              "on-error-container": "#ffb2b9",
+              "on-tertiary": "#0d6100",
+              "outline": "#767575",
+              "error": "#ff6e84",
+              "tertiary-fixed-dim": "#2be800",
+              "on-tertiary-fixed-variant": "#0d6200",
+              "surface-container-low": "#131313",
+              "secondary-fixed-dim": "#ffacc8",
+              "primary": "#de8eff",
+              "secondary-dim": "#e10080",
+              "secondary-container": "#b90068",
+              "on-tertiary-container": "#0b5800",
+              "surface-bright": "#2c2c2c",
+              "surface": "#0e0e0e",
+              "on-primary-fixed-variant": "#4b0069",
+              "tertiary-fixed": "#2ff801",
+              "on-secondary": "#460024",
+              "surface-container-highest": "#262626",
+              "secondary": "#ff68a7",
+              "on-secondary-container": "#fff5f6",
+              "secondary-fixed": "#ffc1d4",
+              "surface-container-lowest": "#000000",
+              "on-tertiary-fixed": "#064200",
+              "error-container": "#a70138",
+              "on-error": "#490013",
+              "on-primary-fixed": "#000000",
+              "on-background": "#ffffff",
+              "on-secondary-fixed": "#6b003a",
+              "surface-container": "#1a1a1a",
+              "on-primary": "#4f006e",
+              "on-primary-container": "#3d0056",
+              "surface-variant": "#262626",
+              "surface-container-high": "#20201f",
+              "on-surface-variant": "#adaaaa",
+              "primary-fixed-dim": "#cf62ff",
+              "error-dim": "#d73357"
+            },
+            fontFamily: {
+              "headline": ["Epilogue"],
+              "body": ["Plus Jakarta Sans"],
+              "label": ["Plus Jakarta Sans"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-panel {
+        backdrop-filter: blur(40px);
+        background: rgba(38, 38, 38, 0.4);
+      }
+      .neon-glow {
+        box-shadow: 0 0 20px rgba(222, 142, 255, 0.3);
+      }
+      body {
+        background-color: #0e0e0e;
+        color: #ffffff;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+    </style>
+</head>
+<body class="selection:bg-primary selection:text-on-primary">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 px-6 py-4 bg-black/80 dark:bg-[#0e0e0e]/80 backdrop-blur-xl shadow-[0_20px_40px_-10px_rgba(160,32,240,0.15)]">
+<div class="flex justify-between items-center max-w-[1440px] mx-auto w-full">
+<div class="text-2xl font-black italic tracking-tighter text-[#de8eff] dark:text-[#de8eff] font-['Epilogue'] cursor-pointer transition-transform hover:scale-105 active:scale-95">
+                Electric Social
+            </div>
+<div class="hidden md:flex items-center space-x-8 font-['Epilogue'] font-bold tracking-tight">
+<a class="text-[#de8eff] font-bold border-b-2 border-[#de8eff] pb-1 transition-all duration-300" href="#">Home</a>
+<a class="text-gray-400 dark:text-[#adaaaa] hover:text-white transition-colors cursor-pointer transition-transform hover:scale-105 active:scale-95" href="#">Features</a>
+<a class="text-gray-400 dark:text-[#adaaaa] hover:text-white transition-colors cursor-pointer transition-transform hover:scale-105 active:scale-95" href="#">Discover</a>
+</div>
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-2 rounded-full font-headline font-bold text-sm tracking-tight hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg shadow-primary/20">
+                Get Started
+            </button>
+</div>
+</nav>
+<!-- Hero Section -->
+<header class="relative pt-32 pb-20 px-6 overflow-hidden">
+<!-- Abstract Background Glows -->
+<div class="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 blur-[120px] rounded-full -mr-64 -mt-32"></div>
+<div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-secondary/10 blur-[100px] rounded-full -ml-32 -mb-32"></div>
+<div class="max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<div class="lg:col-span-7 space-y-8 z-10">
+<div class="inline-flex items-center space-x-2 bg-surface-container-highest px-4 py-2 rounded-full border border-outline-variant/20">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+<span class="text-xs font-label font-bold uppercase tracking-widest text-on-surface-variant">Live in 12 Cities</span>
+</div>
+<h1 class="text-5xl md:text-7xl lg:text-8xl font-headline font-black tracking-tighter leading-[0.9] text-on-surface">
+                    The <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-primary-fixed">Neon Pulse</span> of Social Planning.
+                </h1>
+<p class="text-xl md:text-2xl text-on-surface-variant max-w-2xl leading-relaxed font-body">
+                    Replace chaotic group chats with vibrant event vibes. Create, RSVP, and share memories—all in one place.
+                </p>
+<div class="flex flex-wrap gap-4 pt-4">
+<button class="bg-gradient-to-r from-primary to-primary-container text-on-primary px-8 py-4 rounded-full font-headline font-bold text-lg hover:scale-105 active:scale-95 transition-all duration-300 shadow-xl shadow-primary/30">
+                        Create Your First Event
+                    </button>
+<button class="bg-transparent border border-outline-variant/30 text-on-surface px-8 py-4 rounded-full font-headline font-bold text-lg hover:bg-surface-container-highest transition-all duration-300">
+                        Discover Events Nearby
+                    </button>
+</div>
+</div>
+<div class="lg:col-span-5 relative z-10">
+<div class="relative rounded-xl overflow-hidden shadow-2xl shadow-black">
+<img alt="Vibrant rooftop party under neon lights" class="w-full h-[600px] object-cover scale-105" data-alt="People dancing at a rooftop party with neon lights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPmIaxta-kQSRa6p324qzgn_e6c_U_0-n5AM0lRRqssa23f3Ty-lWhlp56qyHQnTYVKoSpGXQbR5-khrsY1IKW2JQPIGldR85VNqq3XimqGv8MfSBpWuwzVLPe2iW7NGHK7yE-myY1VXoi2wiUQv3gQy2kjBktguPYdPj8kJCTMcSXh_zqYqXzJvMAU4coehJXGkKOZV6WDYdgvnoxc9-22_5H7SqG-6RlxkCSteJUCLu-SV1M9oQ1Y_4qkWLeXgJ3DjRIjJJQplbk"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
+<!-- Floating UI Card Over Hero Image -->
+<div class="absolute bottom-8 left-8 right-8 glass-panel p-6 rounded-lg border border-white/10">
+<div class="flex items-center justify-between mb-4">
+<div>
+<h3 class="font-headline font-bold text-lg">Electric Rooftop Sessions</h3>
+<p class="text-sm text-on-surface-variant">Starts in 2 hours • Downtown</p>
+</div>
+<span class="material-symbols-outlined text-primary" data-icon="bolt">bolt</span>
+</div>
+<div class="flex -space-x-3">
+<div class="w-10 h-10 rounded-full border-2 border-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User avatar profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhRNIRxUmL363t4OW6SVxGVHmMNNTjf_ssXVPQCtApEGT5ugSzc_S6_4uDEtL2O3s_IaO4fZ-speRvOT8lETxIC0qof4P22soKNFAXPWuC2d1p2hV9o89ttDSsgMfmYKID2sqSOiGUycW3RSF7bvopaBoNHN8QWGqiP_An7iGvyuxsgJ336aO7fm0uW2qLify4nZ_xjEx2qFpsAA3iF1EN8GhKrjKmUPCiw0VudiikZbs4T3JZp6BSe-FO4mm53EoPTlLYVSU4lGjh"/>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User avatar profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-7QMVn7LNJJtW4SUcEDMT7EnJkW1mekOWUOB2m07kNkVhIvyPPScOlD8YxfsDlPR393FL8S7JGzzt0PSy7Aw1sBEufFUm4AqrKB_-S4hVGACWx1aocviaaaF89L8R8onz8ImmRy7PiQZVRfDWcVKQRsVsVMn3G2VYkjpVnOVfk1kdxSlfHDzlNBH4XqFRvqUF0QjXJZFptdcyVQSuznswrewvQ-YsrigPZmqEKU5kTzxBr6dO9LYlmaPwdLzeh3SHbZS7TaE5Bn4z"/>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User avatar profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOgeN2SDGV7qIgYW10nd8gNVb6kWPgn_DlXL3TX7h-e4GBLefkAUp4Zw6m3mlIbL0fGosfvzSJPl_C46LhP78keus5IPvNuv7YrZhhTRndosnuM5TaG3dhyDKs4CDau7LuQ8MjWYhlw90mOy4rWoXaVXktl6d2I8LSgsle-zEDSlShi_j6KspATj3gL1RruakccNRbSNpV8SfwHe-4YbGGx3zZnHDdZ2kgAQHYIfb9NmYKatxGsKrwivBnzKYHN5usEiW0DXytKxat"/>
+</div>
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-xs font-bold text-on-primary-container">
+                                +42
+                            </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Social Proof Section -->
+<section class="py-12 bg-surface-container-low border-y border-outline-variant/10">
+<div class="max-w-[1440px] mx-auto px-6">
+<div class="flex flex-col md:flex-row items-center justify-between gap-8 opacity-70">
+<h2 class="font-headline font-extrabold text-2xl tracking-tighter whitespace-nowrap">
+                    Join 50,000+ vibing event-goers.
+                </h2>
+<div class="flex flex-wrap justify-center gap-12 items-center grayscale invert brightness-0 contrast-200">
+<span class="font-headline text-2xl font-black">NYX_CLUB</span>
+<span class="font-headline text-2xl font-black">URBAN_VIBE</span>
+<span class="font-headline text-2xl font-black">NEON_FEST</span>
+<span class="font-headline text-2xl font-black">CITY_BEATS</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Features Bento Grid -->
+<section class="py-24 px-6 max-w-[1440px] mx-auto">
+<div class="text-center mb-20 space-y-4">
+<h2 class="text-4xl md:text-5xl font-headline font-black tracking-tight">Everything You Need. <span class="text-tertiary">Zero Drag.</span></h2>
+<p class="text-on-surface-variant text-lg max-w-xl mx-auto">Skip the logistical nightmare and get straight to the vibe.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 h-full md:h-[800px]">
+<!-- Main Feature: RSVP -->
+<div class="md:col-span-8 bg-surface-container-low rounded-lg p-10 flex flex-col justify-between overflow-hidden relative group">
+<div class="z-10 max-w-md">
+<h3 class="text-3xl font-headline font-black mb-4">No Friction RSVP</h3>
+<p class="text-on-surface-variant leading-relaxed">Guests don't need to download the app or create an account to say 'Yes'. Send a link, get the count, start the party.</p>
+</div>
+<div class="mt-12 flex items-end gap-4 z-10">
+<div class="bg-surface-container-highest p-4 rounded-md w-full border border-outline-variant/10">
+<div class="flex justify-between items-center mb-4">
+<span class="font-bold">RSVP Status</span>
+<span class="text-tertiary font-bold">82% Full</span>
+</div>
+<div class="w-full h-4 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-secondary to-tertiary w-[82%]"></div>
+</div>
+</div>
+</div>
+<div class="absolute -right-20 -bottom-20 w-80 h-80 bg-primary/10 blur-[80px] rounded-full group-hover:bg-primary/20 transition-all duration-500"></div>
+</div>
+<!-- Side Feature: Deeper Social -->
+<div class="md:col-span-4 bg-surface-container-highest rounded-lg p-10 flex flex-col items-center text-center">
+<div class="w-16 h-16 rounded-full bg-secondary-container flex items-center justify-center mb-8">
+<span class="material-symbols-outlined text-on-secondary-container text-3xl" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<h3 class="text-2xl font-headline font-black mb-4">Deeper Social</h3>
+<p class="text-on-surface-variant leading-relaxed mb-8">Live event feeds, instant reactions, and automatic shared photo albums for the morning after.</p>
+<div class="flex -space-x-2">
+<img class="w-12 h-12 rounded-full border-2 border-surface-container-highest" data-alt="User profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLHn0GTj7AX2KDraBBXHdEnECXSGNfeRMzw70MMT2zUT0II_otUQLnn0U2E3jIkfsWPqJ0zM1eY2sx15qi8U0YKsop3yiwuXpXcQw938tFzxAK_RALUURp0MCxR6gylIigQlpwlMLwqYsI_2904X7NA4fQdIgIt-8A37NBM0TcKR-0ZAhwj_9IhWsXWGtl-pnPDBcnL4oNyHWnuySSZyjlX0oxcOfWQwqnpSJf-RqQywmypoDqyZ4d0d8fzlIJwrjL5_uEhXjMymDo"/>
+<img class="w-12 h-12 rounded-full border-2 border-surface-container-highest" data-alt="User profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsvqPeKlzyb1k5V6oHqlmHEruJJFK_6Qf3tYGFpfLc_J7ObqVgkYBmKIAzcMxpt_lzoUxQ1UkzUSobqnclwWzK_8c5EYEgi7z81wADYQN7ow6ALJVMh3vgZQ9cBJelbTMfwm3t1n9bg19F9uvdLU4VG1E3W_jKs1KEbM6A92wOjuAaRfoN9AmQ6M4SfxzBLYXSU4-DwCXu1vbm-z2fOpDAik0y0PRNwjMW3HeC7UpqMHbuuUEBc7OWNQ9mVWLWFH4b9FTD43F7EcYf"/>
+<img class="w-12 h-12 rounded-full border-2 border-surface-container-highest" data-alt="User profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQjYfXOaLzMTQnVXnegGMyOnfT72U-AyNbbHQ7XrEn3PLvQIzevNj7F3EPO4sqiCMXK3X8z7iulbtp4SbdhshjZCkr60jGftTXtja0KyY5sCGeITzqm-VMp3xd8n8LDMJlNuamzRyFzlr33L8ULd-U9Jd-v8klk5fMdY91Dsot22fNTU4liZCikSlFDpT0s8XbyRxVaqP-pyPnQpwWclk9GqqniMdtQ5IzGLghia-phsWTxXdqYqFDvxLfsPFDpoiJKrdZOcKxRc5v"/>
+</div>
+</div>
+<!-- Pro Tools -->
+<div class="md:col-span-4 bg-surface-container-highest rounded-lg p-10 flex flex-col justify-end relative overflow-hidden">
+<div class="absolute top-0 left-0 p-8">
+<span class="material-symbols-outlined text-tertiary text-4xl" data-icon="task_alt">task_alt</span>
+</div>
+<h3 class="text-2xl font-headline font-black mb-4">Pro Planning Tools</h3>
+<p class="text-on-surface-variant leading-relaxed">Collaborative 'What to bring' lists and built-in budget trackers for serious hosts.</p>
+</div>
+<!-- Casual Hangout -->
+<div class="md:col-span-8 bg-surface-container-low rounded-lg p-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-center border border-primary/5">
+<div class="space-y-4">
+<h3 class="text-3xl font-headline font-black">Casual Hangout Mode</h3>
+<p class="text-on-surface-variant leading-relaxed">The unique 'drop-in' feature for spontaneous meetups. No plan? No problem. Just drop a pin.</p>
+<div class="pt-4">
+<button class="text-tertiary font-bold uppercase tracking-widest text-sm hover:underline">See how it works →</button>
+</div>
+</div>
+<div class="bg-black/40 rounded-lg p-2 aspect-video flex items-center justify-center">
+<div class="w-full h-full rounded-md bg-zinc-900 border border-white/5 flex flex-col p-4 relative">
+<div class="flex items-center gap-2 mb-4">
+<div class="w-8 h-8 rounded-full bg-secondary"></div>
+<div class="flex-1 h-3 bg-surface-container-highest rounded-full"></div>
+</div>
+<div class="flex-1 bg-surface-container-highest rounded-md flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant/20" data-icon="map">map</span>
+</div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+<span class="material-symbols-outlined text-primary text-4xl" data-icon="location_on" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Testimonials Section -->
+<section class="py-24 px-6 bg-[#131313]">
+<div class="max-w-[1440px] mx-auto">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+<div class="space-y-8">
+<h2 class="text-5xl font-headline font-black leading-tight">Hosts are <br/><span class="text-primary italic">Ditching the Spreadsheet.</span></h2>
+<div class="flex flex-col gap-8">
+<div class="glass-panel p-8 rounded-lg border-l-4 border-primary">
+<p class="text-xl italic font-body text-on-surface mb-6">"Electric Social turned our chaotic WhatsApp groups into actual events. I don't have to chase people for RSVPs anymore—the vibe check feature does it for me."</p>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container-highest">
+<img class="w-full h-full object-cover" data-alt="Testimonial author portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDw5vvIDEj2a1xGLvQy9Q96Y4FuiX7b6Y4INjBHITR6PVS5IAX0QAvg54nkoAnBDucHsUGOvXCLcatToonyOsxi1wc6fP96Qpy8bTw8P5SxIsNhK71fyGB9TPD5F2gRyanWUPoEygBxStnM1kT4qaJOdeUv49lTwr6JWGzw3Irt36sMc_5gGNwy0QNsyn078EvaC62k-bsvwANcaHrgIqOY-3FP3paJoIoPoxhCsdSmFRjI4RCD5OW_SiJNl-laNr-pwoCrUftwMpcw"/>
+</div>
+<div>
+<p class="font-bold">Sarah J.</p>
+<p class="text-xs text-on-surface-variant uppercase tracking-widest">Power Host, Brooklyn</p>
+</div>
+</div>
+</div>
+<div class="glass-panel p-8 rounded-lg border-l-4 border-secondary">
+<p class="text-xl italic font-body text-on-surface mb-6">"The budget tracker alone saved us $200 on our last lake trip. It's built by people who actually throw parties."</p>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container-highest">
+<img class="w-full h-full object-cover" data-alt="Testimonial author portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBskvSz858PxBXRnNAAq13EdSirjojZg5ZuIqznegUvcMzJMLWeUZVlcSxUJuSDQGNGlQ1YLianKTJ_e5TD7KqHo6iRGp8_IXkc6PJwujnPngmoUzghBFKYKuCFJJFLS618Hue5O6dwUgTEDeuKAweX-AcD98nRbf-IzlAlgdOmbJJ61zvChSekPNW9tU-aFzv03XlTiAZd3JYFzLue3Y7BUNLmO4XRZRcDfoNAMd5Swxcoq4l0QD6TA64Qe1H7Kj_gJQ6J_dZOJWF4"/>
+</div>
+<div>
+<p class="font-bold">Marcus T.</p>
+<p class="text-xs text-on-surface-variant uppercase tracking-widest">Creator, LA</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="relative">
+<div class="aspect-square bg-gradient-to-br from-primary/20 to-secondary/20 rounded-xl overflow-hidden relative">
+<img alt="Friends laughing at a party" class="w-full h-full object-cover mix-blend-overlay" data-alt="Group of diverse young friends enjoying an indoor house party" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJYQO8DVK0aVmDovm5tb9jL-i1kvmDGjFoTJHg-I1SqZ6tyZIrqm0RGvgTVLLaYAJnhw03pbCcLzOA9VZ6puTcXBcjbeVDXmwo18PbZq7t3wRGAbXEO6BLdfHlPHJ8bDezSklUznPMU90nvIwbTRUSuITOOgYvUC2iQp9TJpdGMNNFaG6qMdlpZnjwfW9j5cDOKVldiccCJpG2OOW6KLMga0KdWRU03H3RT_vnFjPzkg0cednddvK9NEM4kdlmX7BCAn3TNOf_EIbB"/>
+<div class="absolute inset-0 bg-black/20"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-20 h-20 rounded-full bg-primary/90 flex items-center justify-center cursor-pointer hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl text-on-primary ml-1" data-icon="play_arrow" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Final CTA -->
+<section class="py-32 px-6 overflow-hidden relative">
+<div class="max-w-4xl mx-auto text-center space-y-12 relative z-10">
+<h2 class="text-6xl md:text-8xl font-headline font-black tracking-tighter leading-none">Ready to <span class="text-primary">Pulse?</span></h2>
+<p class="text-2xl text-on-surface-variant font-body">Join the next generation of social planners and event-goers.</p>
+<div class="flex flex-col md:flex-row items-center justify-center gap-6">
+<button class="w-full md:w-auto bg-primary text-on-primary px-12 py-6 rounded-full font-headline font-black text-2xl hover:bg-primary-container transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-primary/40">
+                    Create Your First Event
+                </button>
+<div class="text-on-surface-variant font-label text-sm uppercase tracking-widest">No credit card required</div>
+</div>
+</div>
+<!-- Decorative Elements -->
+<div class="absolute top-1/2 left-0 -translate-y-1/2 w-96 h-96 bg-secondary/20 blur-[150px] rounded-full"></div>
+<div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-tertiary/10 blur-[150px] rounded-full"></div>
+</section>
+<!-- Footer -->
+<footer class="bg-[#0e0e0e] dark:bg-[#0e0e0e] w-full py-12 px-8 bg-[#131313] mt-20">
+<div class="flex flex-col md:flex-row justify-between items-center gap-6 max-w-[1440px] mx-auto">
+<div class="flex flex-col items-center md:items-start gap-4">
+<div class="text-lg font-black text-[#de8eff] font-['Epilogue']">Electric Social</div>
+<p class="font-['Plus_Jakarta_Sans'] text-sm uppercase tracking-widest text-[#adaaaa] text-center md:text-left">
+                    © 2024 Electric Social. The Neon Pulse of Events.
+                </p>
+</div>
+<div class="flex gap-8 font-['Plus_Jakarta_Sans'] text-sm uppercase tracking-widest">
+<a class="text-[#adaaaa] hover:text-[#8eff71] transition-colors ease-in-out duration-200" href="#">Privacy</a>
+<a class="text-[#adaaaa] hover:text-[#8eff71] transition-colors ease-in-out duration-200" href="#">Terms</a>
+<a class="text-[#adaaaa] hover:text-[#8eff71] transition-colors ease-in-out duration-200" href="#">Safety</a>
+<a class="text-[#adaaaa] hover:text-[#8eff71] transition-colors ease-in-out duration-200" href="#">Contact</a>
+</div>
+<div class="flex gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-xl" data-icon="share">share</span>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-xl" data-icon="groups">groups</span>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

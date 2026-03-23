@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .glass-panel {
+    backdrop-filter: blur(40px);
+    background: rgba(38, 38, 38, 0.4);
+  }
+  .neon-glow {
+    box-shadow: 0 0 20px rgba(222, 142, 255, 0.3);
+  }
+}
