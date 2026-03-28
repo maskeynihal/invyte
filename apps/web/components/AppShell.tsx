@@ -6,6 +6,7 @@ import { TopAppBar } from "@invyte/ui/top-app-bar";
 import { BottomNavBar } from "@invyte/ui/bottom-nav-bar";
 import { useConvexAuth, useMutation } from "convex/react";
 import { api } from "@invyte/convex";
+import InstallPrompt from "@/components/InstallPrompt";
 
 interface AppShellProps {
   children: ReactNode;
@@ -20,7 +21,10 @@ function getActiveTab(pathname: string): string {
   return "discover";
 }
 
-export default function AppShell({ children, hideNav = false }: Readonly<AppShellProps>) {
+export default function AppShell({
+  children,
+  hideNav = false,
+}: Readonly<AppShellProps>) {
   const router = useRouter();
   const pathname = usePathname();
   const activeTab = getActiveTab(pathname);
@@ -35,17 +39,31 @@ export default function AppShell({ children, hideNav = false }: Readonly<AppShel
     }
   }, [isAuthenticated, storeUser]);
 
+  const handleNavigate = (href: string) => {
+    if (href === pathname) {
+      return;
+    }
+
+    router.push(href);
+
+    // After returning from third-party auth pages, client router state can become stale.
+    // Fallback to browser navigation if the route did not change shortly after push.
+    window.setTimeout(() => {
+      if (window.location.pathname === pathname) {
+        window.location.assign(href);
+      }
+    }, 250);
+  };
+
   return (
     <>
       <TopAppBar />
       <main className="pt-20 pb-28 px-4 max-w-lg mx-auto min-h-screen">
+        <InstallPrompt />
         {children}
       </main>
       {!hideNav && (
-        <BottomNavBar
-          activeTab={activeTab}
-          onNavigate={(href) => router.push(href)}
-        />
+        <BottomNavBar activeTab={activeTab} onNavigate={handleNavigate} />
       )}
     </>
   );
