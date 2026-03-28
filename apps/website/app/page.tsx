@@ -2,6 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function LandingPage() {
+  const appBaseUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3001").replace(
+    /\/$/,
+    "",
+  );
+  const createEventUrl = `${appBaseUrl}/create`;
+  const discoverEventsUrl = `${appBaseUrl}/`;
+
   return (
     <main className="min-h-screen selection:bg-primary selection:text-on-primary font-body">
       {/* TopAppBar */}
@@ -21,9 +28,12 @@ export default function LandingPage() {
               Discover
             </Link>
           </div>
-          <button className="bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-2 rounded-full font-headline font-bold text-sm tracking-tight hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg shadow-primary/20">
+          <Link
+            href={createEventUrl}
+            className="bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-2 rounded-full font-headline font-bold text-sm tracking-tight hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg shadow-primary/20"
+          >
             Get Started
-          </button>
+          </Link>
         </div>
       </nav>
 
@@ -46,20 +56,28 @@ export default function LandingPage() {
               Replace chaotic group chats with vibrant event vibes. Create, RSVP, and share memories—all in one place.
             </p>
             <div className="flex flex-wrap gap-4 pt-4">
-              <button className="bg-gradient-to-r from-primary to-primary-container text-on-primary px-8 py-4 rounded-full font-headline font-bold text-lg hover:scale-105 active:scale-95 transition-all duration-300 shadow-xl shadow-primary/30">
+              <Link
+                href={createEventUrl}
+                className="bg-gradient-to-r from-primary to-primary-container text-on-primary px-8 py-4 rounded-full font-headline font-bold text-lg hover:scale-105 active:scale-95 transition-all duration-300 shadow-xl shadow-primary/30"
+              >
                 Create Your First Event
-              </button>
-              <button className="bg-transparent border border-outline-variant/30 text-on-surface px-8 py-4 rounded-full font-headline font-bold text-lg hover:bg-surface-container-highest transition-all duration-300">
+              </Link>
+              <Link
+                href={discoverEventsUrl}
+                className="bg-transparent border border-outline-variant/30 text-on-surface px-8 py-4 rounded-full font-headline font-bold text-lg hover:bg-surface-container-highest transition-all duration-300"
+              >
                 Discover Events Nearby
-              </button>
+              </Link>
             </div>
           </div>
           <div className="lg:col-span-5 relative z-10">
-            <div className="relative rounded-xl overflow-hidden shadow-2xl shadow-black">
-              <img
+            <div className="relative h-[600px] rounded-xl overflow-hidden shadow-2xl shadow-black">
+              <Image
                 alt="Vibrant rooftop party under neon lights"
-                className="w-full h-[600px] object-cover scale-105"
+                className="object-cover scale-105"
+                fill
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPmIaxta-kQSRa6p324qzgn_e6c_U_0-n5AM0lRRqssa23f3Ty-lWhlp56qyHQnTYVKoSpGXQbR5-khrsY1IKW2JQPIGldR85VNqq3XimqGv8MfSBpWuwzVLPe2iW7NGHK7yE-myY1VXoi2wiUQv3gQy2kjBktguPYdPj8kJCTMcSXh_zqYqXzJvMAU4coehJXGkKOZV6WDYdgvnoxc9-22_5H7SqG-6RlxkCSteJUCLu-SV1M9oQ1Y_4qkWLeXgJ3DjRIjJJQplbk"
+                unoptimized
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
               {/* Floating UI Card */}
@@ -106,7 +124,7 @@ export default function LandingPage() {
           <div className="md:col-span-8 bg-surface-container-low rounded-lg p-10 flex flex-col justify-between overflow-hidden relative group">
             <div className="z-10 max-w-md">
               <h3 className="text-3xl font-headline font-black mb-4">No Friction RSVP</h3>
-              <p className="text-on-surface-variant leading-relaxed">Guests don't need to download the app or create an account to say 'Yes'. Send a link, get the count, start the party.</p>
+              <p className="text-on-surface-variant leading-relaxed">Guests don&apos;t need to download the app or create an account to say &apos;Yes&apos;. Send a link, get the count, start the party.</p>
             </div>
             <div className="mt-12 flex items-end gap-4 z-10">
               <div className="bg-surface-container-highest p-4 rounded-md w-full border border-outline-variant/10">
@@ -135,15 +153,17 @@ export default function LandingPage() {
               <span className="text-tertiary text-4xl">☑️</span>
             </div>
             <h3 className="text-2xl font-headline font-black mb-4">Pro Planning Tools</h3>
-            <p className="text-on-surface-variant leading-relaxed">Collaborative 'What to bring' lists and built-in budget trackers for serious hosts.</p>
+            <p className="text-on-surface-variant leading-relaxed">Collaborative &apos;what to bring&apos; lists and built-in budget trackers for serious hosts.</p>
           </div>
 
           <div className="md:col-span-8 bg-surface-container-low rounded-lg p-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-center border border-primary/5">
             <div className="space-y-4">
               <h3 className="text-3xl font-headline font-black">Casual Hangout Mode</h3>
-              <p className="text-on-surface-variant leading-relaxed">The unique 'drop-in' feature for spontaneous meetups. No plan? No problem. Just drop a pin.</p>
+              <p className="text-on-surface-variant leading-relaxed">The unique &apos;drop-in&apos; feature for spontaneous meetups. No plan? No problem. Just drop a pin.</p>
               <div className="pt-4">
-                <button className="text-tertiary font-bold uppercase tracking-widest text-sm hover:underline">See how it works →</button>
+                <Link href={discoverEventsUrl} className="text-tertiary font-bold uppercase tracking-widest text-sm hover:underline">
+                  See how it works →
+                </Link>
               </div>
             </div>
           </div>
@@ -156,9 +176,12 @@ export default function LandingPage() {
           <h2 className="text-6xl md:text-8xl font-headline font-black tracking-tighter leading-none">Ready to <span className="text-primary">Pulse?</span></h2>
           <p className="text-2xl text-on-surface-variant">Join the next generation of social planners and event-goers.</p>
           <div className="flex flex-col md:flex-row items-center justify-center gap-6">
-            <button className="w-full md:w-auto bg-primary text-on-primary px-12 py-6 rounded-full font-headline font-black text-2xl hover:bg-primary-container transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-primary/40">
+            <Link
+              href={createEventUrl}
+              className="w-full md:w-auto bg-primary text-on-primary px-12 py-6 rounded-full font-headline font-black text-2xl hover:bg-primary-container transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-primary/40"
+            >
               Create Your First Event
-            </button>
+            </Link>
           </div>
         </div>
       </section>

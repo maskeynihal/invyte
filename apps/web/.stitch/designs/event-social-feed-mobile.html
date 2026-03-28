@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Invyte - Neon Dreams Feed</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@700;800;900&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            background-color: #0e0e13;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #f8f5fd;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        /* Custom scrollbar suppression for clean mobile feel */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "surface-container-lowest": "#000000",
+                "primary-container": "#c583ff",
+                "tertiary-fixed": "#ff87da",
+                "primary": "#ce96ff",
+                "on-secondary-fixed-variant": "#00586d",
+                "secondary-fixed": "#7edeff",
+                "surface-container-low": "#131318",
+                "on-primary": "#48007a",
+                "on-background": "#f8f5fd",
+                "outline": "#76747b",
+                "on-primary-container": "#37005f",
+                "primary-dim": "#a041f0",
+                "surface-container-high": "#1f1f26",
+                "error": "#ff6e84",
+                "secondary-container": "#00677f",
+                "on-tertiary": "#430036",
+                "inverse-primary": "#8922d8",
+                "tertiary": "#ff5ed6",
+                "on-tertiary-fixed": "#34002a",
+                "on-error-container": "#ffb2b9",
+                "tertiary-container": "#ff00d4",
+                "inverse-on-surface": "#55545a",
+                "secondary-dim": "#00c3ed",
+                "background": "#0e0e13",
+                "tertiary-dim": "#ff5ed6",
+                "on-secondary": "#004253",
+                "secondary-fixed-dim": "#30d4ff",
+                "secondary": "#00d2ff",
+                "primary-fixed": "#c583ff",
+                "on-surface": "#f8f5fd",
+                "surface-bright": "#2c2b33",
+                "primary-fixed-dim": "#bc6fff",
+                "surface-variant": "#25252c",
+                "on-primary-fixed": "#000000",
+                "surface-dim": "#0e0e13",
+                "error-dim": "#d73357",
+                "on-secondary-fixed": "#003a48",
+                "surface-tint": "#ce96ff",
+                "outline-variant": "#48474d",
+                "on-tertiary-fixed-variant": "#6f005b",
+                "on-primary-fixed-variant": "#450074",
+                "surface-container-highest": "#25252c",
+                "error-container": "#a70138",
+                "tertiary-fixed-dim": "#ff6bd7",
+                "surface-container": "#19191f",
+                "on-secondary-container": "#eefaff",
+                "inverse-surface": "#fbf8ff",
+                "surface": "#0e0e13",
+                "on-tertiary-container": "#0e000a",
+                "on-error": "#490013",
+                "on-surface-variant": "#acaab1"
+              },
+              fontFamily: {
+                "headline": ["Epilogue"],
+                "body": ["Plus Jakarta Sans"],
+                "label": ["Plus Jakarta Sans"]
+              },
+              borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#0e0e13]/60 backdrop-blur-xl shadow-[0_40px_40px_-5px_rgba(206,150,255,0.12)]">
+<div class="flex justify-between items-center px-6 h-16 w-full">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/30 active:scale-95 duration-200 transition-opacity hover:opacity-80">
+<img class="w-full h-full object-cover" data-alt="User profile photo avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAopNbS9QxZuFAm_lFb9ocJegK9c6rJJ4LIXl2WdqGDT-4fFiY0XK8HRW51E2NbjPnIFYuHtm0blCYHXATzP2hiXCxpYA8z6HZTKc2k79UmE_9cgqYf8AMwChdpVzZAEEHiXz2j8B39c8j5HGde0SLM6DjAZxA4HaCpGBScPco_scwu0YhLjLVdKwZgD3RE0ck2VvpkLNL13Q6TfM4Y1YnJDVQs-eFnRyYJtGU_x8uC8frWUwkxvoO6KFTa2LStNquJZth_CLmGuy4y"/>
+</div>
+<span class="text-2xl font-black italic text-transparent bg-clip-text bg-gradient-to-br from-[#ce96ff] to-[#00d2ff] font-['Epilogue'] tracking-tighter uppercase">Invyte</span>
+</div>
+<button class="text-[#ce96ff] active:scale-95 duration-200 transition-opacity hover:opacity-80">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</div>
+</header>
+<main class="pt-20 px-4 space-y-6">
+<!-- Host Broadcast Banner -->
+<section class="relative overflow-hidden rounded-2xl bg-surface-container-high p-4 border border-outline-variant/15">
+<div class="absolute top-0 right-0 p-2">
+<span class="flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
+</span>
+</div>
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-on-primary text-2xl" data-icon="campaign" style="font-variation-settings: 'FILL' 1;">campaign</span>
+</div>
+<div>
+<h3 class="font-headline font-extrabold text-primary text-sm tracking-tight uppercase">HOST BROADCAST</h3>
+<p class="text-on-surface text-sm font-medium mt-1">"The secret location for Neon Dreams is now live in the event chat! 📍 See you all at 10 PM."</p>
+<span class="text-[10px] text-on-surface-variant font-bold uppercase mt-2 block tracking-widest">2 MINS AGO • ALEX VANCE</span>
+</div>
+</div>
+</section>
+<!-- Who's In Section (Avatar Horizontal List) -->
+<section>
+<div class="flex items-center justify-between mb-3 px-2">
+<h2 class="font-headline font-black text-lg tracking-tight uppercase">Who's In <span class="text-secondary">Neon Dreams</span></h2>
+<span class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">42 JOINED</span>
+</div>
+<div class="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 no-scrollbar">
+<div class="flex flex-col items-center gap-2 flex-shrink-0">
+<div class="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-primary via-tertiary to-secondary">
+<div class="w-full h-full rounded-full border-4 border-background overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Female attendee profile photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCr2klHwDE3li82-s86BbVp0ir429y8Om6QCXnePssmyZsiTFpv3F3rOmNCQLBBchq4CogyXYzOwXvdC4ynKVrvej-BgS9o4RsjuCUr-857_7WL_B6x_QeQnHRN-XnNLuMryyjiZ0RWC9vmy50g_H0ynJ63oBCY7aEalgbmfgOsNsMD51V7e-WQq3GC9l7p4uBHp2FZk1-JjZxnQNvY6ASvB0jYF4ldfiAnKaFWoxGQdc1YP4YY4bwEyuVH0s6HYbml-mTb1lk3qY17"/>
+</div>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Sarah</span>
+</div>
+<div class="flex flex-col items-center gap-2 flex-shrink-0">
+<div class="w-16 h-16 rounded-full p-0.5 bg-surface-variant">
+<div class="w-full h-full rounded-full border-4 border-background overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Male attendee profile photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB11ZhJ51s9pDep1VoMebf2cpjQOYbgavd6TsWGzhuF1XP2d9mCgUV8fi3G0cm6Zrj7twEh6C-ZvTFk6sj-GCtIwQ4ybWWY8V40RoMDyHILj5MceaCRV_tk0EjFTfBM96zHI7EcL2RD5rXrqm8EL8gqiWyzQWuD-B4XVNMvX3PsLdUEjSyTntrR8X8_jc6rEt6XIkmO_Lc8qTPPv-i05Q3peNORyJLTEopt8QFDBNnz_lI8a_u1EJ0xi9nQL8oSd1MUzA-b6QWgx7SY"/>
+</div>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Marcus</span>
+</div>
+<div class="flex flex-col items-center gap-2 flex-shrink-0">
+<div class="w-16 h-16 rounded-full p-0.5 bg-surface-variant">
+<div class="w-full h-full rounded-full border-4 border-background overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Attendee profile photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVHWopnWopIS-UGMtHeF2oQVLiHkvy1gODNCVhk2mNqok9vxOfc9i4cdkmosGBlcePMp1RjGW1obbaE6EmSCJHbo1labs-VbuF8Q8GaAB2y4e_JjafRBuhhZzZIhUhLa5wlZ8_oiuNfuy4Mh1JdbX_KNAnAdDx7bkA0VggK3-5p6tjRtdi6o5CdTuKai8I3fb_l8bi1GO_1ze5C4LZf3Mofd9LQ5Ly24sX3bC534ZSH4tyeLc2sn_cEeBaethhvojHypRSe2dF9DpP"/>
+</div>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Elena</span>
+</div>
+<div class="flex flex-col items-center gap-2 flex-shrink-0">
+<div class="w-16 h-16 rounded-full p-0.5 bg-surface-variant">
+<div class="w-full h-full rounded-full border-4 border-background overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Attendee profile photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsascC3w7ybMnSSV9KXeoTatwcb6D_aaN61a2sx3CyDTCnUXzHvvAIomkRjIci8dewUgYTA5sRIk3beuXBbbU3o2gNFU2gEphAtx7PfXEP1zdBVDbGlFruu2szOCC4zzlE1ZqeoDAoMZ2afy9i7vyzAOcNx7S2sheFwRN8C1tuotctjMwj9ggTMvr7fEiabemADsQbQuAIFGcpGKRgPiGV3pk1n69zaz0VecFcSS-_AEX89TfScYO6pSeoOat7uQMy10Dp7GI_yaU1"/>
+</div>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">David</span>
+</div>
+<div class="flex flex-col items-center gap-2 flex-shrink-0">
+<div class="w-16 h-16 rounded-full p-0.5 bg-surface-variant">
+<div class="w-full h-full rounded-full border-4 border-background overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Attendee profile photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaTrIKyLOAsfPjG1aBOaWrMCU2GVSXyNaTG3VHARrOle8124RixE0KsoxucbwseIawQ_XkvwfrBJvnKLEAzXLj70TxslxNun6FJ24eY1BfK2rgR1woRAnKU0Uw6TKwkOfZM6rfzCKU7A5-XKYO_cBf9KfGNvuhxUhQQU1wQvjgvd3niGfwRAgWMCnusN5YeP2pqCZLsAdPTaq5sAycld16DWw-Fek5pTMgtZJe8r9VpGER0-J6D7y5-sauuIKnNXFf6HtsCW1KO27y"/>
+</div>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">Chloe</span>
+</div>
+<div class="flex flex-col items-center justify-center flex-shrink-0">
+<div class="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center border-2 border-dashed border-outline-variant">
+<span class="text-secondary font-bold text-xs">+37</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">More</span>
+</div>
+</div>
+</section>
+<!-- Social Activity Feed -->
+<section class="space-y-8">
+<!-- Post 1: Image Centric -->
+<article class="space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-primary/20">
+<img class="w-full h-full object-cover" data-alt="User Elena's profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNkgTrOxqcwZg3Sx4MTpqCyXMFZbF-T3h13TrRtrhmGQ2M9cI2UTaiaoyzxRLcDtwK7l_9KVR3KWyuVg1Fpgxjo0M3pTKMUJKifiH3PiIwUCxlSIhadLotw9KxXscgGwC4eBBUWZs4-sOBGk51Ay_P7-HScfk6YfLgivDYUIeyslcLVs871OW03NFd_J5hKrQuIFfORlECBW57wIXXYCIvHrFOC1errbMb3i9utdoKkwUUoL28UP4d01qmSof8FPZpqkxavRU1hdOe"/>
+</div>
+<div>
+<p class="font-bold text-sm">Elena Rodriguez</p>
+<p class="text-xs text-on-surface-variant font-medium">shared a photo from <span class="text-primary">Neon Dreams</span></p>
+</div>
+</div>
+<button class="text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span>
+</button>
+</div>
+<div class="relative group">
+<div class="aspect-[4/5] rounded-[24px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Crowd at a vibrant neon music festival" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBc7OONGahH9keceIz6f2lTIzQLvDB3nc4EIbDsXP8zPw4NQZKvQI56L0y0BsE3_spprxFYhcGzhXYSoJpw4WaRFqdQTi_TFXIXERzzDGrA-Ir7tf7n4iiQRrnM9Qnp1SZMGZ6_wj0185kjwfgy0Yj2aaQ7IeqNmYUluWmDu9l0IJJOmnHtw-LBPBVT-IME76Qb9WMs6idmBEXdO0ADog57uWNhNc4G8jRkIfLDca82qFDg_aYdxE8z8boZ98-a8nfyzuM5SxhipcX5"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent"></div>
+</div>
+<div class="absolute bottom-6 left-6 right-6 flex items-center justify-between bg-black/40 backdrop-blur-md rounded-2xl p-4 border border-white/10">
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-1.5 text-secondary">
+<span class="material-symbols-outlined fill-1" data-icon="favorite" style="font-variation-settings: 'FILL' 1;">favorite</span>
+<span class="text-xs font-bold uppercase tracking-widest">124</span>
+</button>
+<button class="flex items-center gap-1.5 text-on-surface">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+<span class="text-xs font-bold uppercase tracking-widest">12</span>
+</button>
+</div>
+<button class="text-on-surface">
+<span class="material-symbols-outlined" data-icon="share">share</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Post 2: Text/Check-in Centric -->
+<article class="bg-surface-container-low rounded-3xl p-6 space-y-4 border-l-4 border-tertiary">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User Marcus profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9-j2bR4HmBf-cjZGMpnL7nmmfm8wPAYmSuBnBlWIeORjgut8Bc8c-L8bn--i4E9GHCqt17X9pp5ZXo2PKgLVShmBJeFZABUDbiv7nSHfXqySEvg_UF2Tc4pF4bcKlHHDGHP_GSTfZHClW_Z4UOJT2OJvKaTbKL-DZt11QqifqEdGBfl9SIJdnjuBdpfHV-4pufifrRsAT_HVADLsBtzYdWrhFUwRgepo30WSc2Pl5DCmhE7Z_0M3cpNDUQm18GX4B0OQvl7m7sige"/>
+</div>
+<div>
+<p class="font-bold text-sm">Marcus Chen <span class="text-tertiary ml-1">checked in</span></p>
+<p class="text-xs text-on-surface-variant">15 mins ago</p>
+</div>
+</div>
+<p class="text-on-surface text-lg leading-relaxed font-medium">
+                    "Just arrived at the pre-party. The vibe is already electric. Who's bringing the extra glow sticks? ⚡️✨"
+                </p>
+<div class="flex items-center gap-4 pt-2">
+<button class="flex items-center gap-1.5 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="thumb_up">thumb_up</span>
+<span class="text-xs font-bold">28</span>
+</button>
+<button class="flex items-center gap-1.5 text-on-surface-variant hover:text-secondary transition-colors">
+<span class="material-symbols-outlined" data-icon="reply">reply</span>
+<span class="text-xs font-bold">REPLY</span>
+</button>
+</div>
+</article>
+<!-- Post 3: Bento style multi-photo -->
+<article class="space-y-4">
+<div class="flex items-center gap-3 px-2">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-secondary/20">
+<img class="w-full h-full object-cover" data-alt="User Chloe profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBx8Iz7_TLhNm4I3Y-UsNesXpW4CRnv6uJF0EerOLvXPqe5gTyW-SSkC0bXwvcfws4b3qKmkBatV4YOA0oCeFY_z8i8Arp2FAdVdosDZYitvPl-uE2JD1NDJMu6YhVlD5Cp2ldcTRKCVYEtFYccRvKIRKtD3s3o5HK5zAUQu_Uj10JgCbABg7Z0AMq-qxSjabOO4dVP2NzqK4FNmo8p-CLBY47ccVgV3Io9Es894_1rBANzaHOKh9A_9ylpY3pMWGJqz6srrMUaQQBS"/>
+</div>
+<div>
+<p class="font-bold text-sm">Chloe Summers</p>
+<p class="text-xs text-on-surface-variant">42 mins ago</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3 h-64">
+<div class="rounded-2xl overflow-hidden shadow-lg">
+<img class="w-full h-full object-cover" data-alt="Neon lights at a party venue" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvYv9eJeNq1HeH70fhRNVj1zxuI2QUQXVnkhfzZRmml1QJbibOKTejntkWveiRnfVYM3QOgWmteZxtTjhxWkNXtmXBuJOcT5rsV5TEfPUezpZGQygnBfHGez5on-Ia6vtskwDkCwkRGl5kqaQcCzLqaCOQGOyD8JJE9KTqAdGoqfuGdGwcagqeXmbSxMNlD8Qx65hiW-ruXyYTIF9_XwtWFxaa8opePzCEXM6wI2xh0SfE9UUK5dDLKLECxIkUwV1WniKR_tocu5RN"/>
+</div>
+<div class="grid grid-rows-2 gap-3">
+<div class="rounded-2xl overflow-hidden shadow-lg">
+<img class="w-full h-full object-cover" data-alt="DJ playing music deck" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCn5sJHT0SP2a4ERNGjxa7mZpDmYbG6-FLQUFX2BWSfhEqOVcR0W4H1UQqEX1GOEL0XoamWQwzH_zQ1oXx80XILpmwUCMCt3TNwReth161hIDt_2IRwHpq4h7ui5pBh6zyz9iE23EvVyop4CVbaer3RJHT_F36AEmalOjDfxFheZKFi-puxK-3shtgWLXR4ULETlEq9hvonEXb_eROkpZexT33haB5XRtGH3SgGlg8W7W7q5NGKUzMJTzls-fBOilVljpLebFv3VYaF"/>
+</div>
+<div class="rounded-2xl overflow-hidden bg-primary/20 flex flex-col items-center justify-center p-4 border border-primary/30 text-center">
+<span class="material-symbols-outlined text-primary mb-1" data-icon="celebration" style="font-variation-settings: 'FILL' 1;">celebration</span>
+<p class="text-[10px] font-black uppercase tracking-tighter text-primary">Pre-Party Mix</p>
+</div>
+</div>
+</div>
+</article>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50">
+<!-- Floating Action Button for 'Plan' which is active based on instructions context of creating activity -->
+<div class="absolute -top-20 left-1/2 -translate-x-1/2">
+<button class="w-16 h-16 bg-gradient-to-br from-primary to-primary-container rounded-full shadow-[0_10px_30px_rgba(206,150,255,0.4)] flex items-center justify-center text-on-primary-container active:scale-90 duration-300 ease-out">
+<span class="material-symbols-outlined text-3xl font-bold" data-icon="add_circle" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+</button>
+</div>
+<div class="bg-[#0e0e13]/60 backdrop-blur-2xl rounded-t-[24px] shadow-[0_-10px_30px_-10px_rgba(0,210,255,0.2)] flex justify-around items-center px-4 pb-6 pt-3 w-full">
+<a class="flex flex-col items-center justify-center text-slate-500 px-4 py-2 hover:text-[#00d2ff] transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="explore">explore</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase tracking-widest">Discovery</span>
+</a>
+<!-- Feed is active -->
+<a class="flex flex-col items-center justify-center bg-[#ce96ff]/20 text-[#ce96ff] rounded-2xl px-4 py-2 transition-all" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="dynamic_feed" style="font-variation-settings: 'FILL' 1;">dynamic_feed</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase tracking-widest">Feed</span>
+</a>
+<!-- Empty spacer for FAB -->
+<div class="w-16"></div>
+<a class="flex flex-col items-center justify-center text-slate-500 px-4 py-2 hover:text-[#00d2ff] transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="add_circle">add_circle</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase tracking-widest">Plan</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 px-4 py-2 hover:text-[#00d2ff] transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span class="font-['Plus_Jakarta_Sans'] text-[10px] font-bold uppercase tracking-widest">Profile</span>
+</a>
+</div>
+</nav>
+</body></html>

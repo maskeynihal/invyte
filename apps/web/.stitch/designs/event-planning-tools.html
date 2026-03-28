@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Electric Utility - Event Planning Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@700;800;900&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "secondary-container": "#b90068",
+                        "on-tertiary-container": "#0b5800",
+                        "secondary-dim": "#e10080",
+                        "primary": "#de8eff",
+                        "on-tertiary-fixed-variant": "#0d6200",
+                        "tertiary-fixed-dim": "#2be800",
+                        "secondary-fixed-dim": "#ffacc8",
+                        "surface-container-low": "#131313",
+                        "tertiary": "#8eff71",
+                        "tertiary-dim": "#2be800",
+                        "on-tertiary": "#0d6100",
+                        "on-error-container": "#ffb2b9",
+                        "error": "#ff6e84",
+                        "outline": "#767575",
+                        "tertiary-container": "#2ff801",
+                        "surface-tint": "#de8eff",
+                        "surface-dim": "#0e0e0e",
+                        "primary-container": "#d779ff",
+                        "on-surface": "#ffffff",
+                        "primary-fixed": "#d779ff",
+                        "inverse-primary": "#9900d1",
+                        "primary-dim": "#b90afc",
+                        "on-secondary-fixed-variant": "#9f0059",
+                        "background": "#0e0e0e",
+                        "inverse-on-surface": "#565555",
+                        "inverse-surface": "#fcf9f8",
+                        "outline-variant": "#484847",
+                        "primary-fixed-dim": "#cf62ff",
+                        "error-dim": "#d73357",
+                        "on-primary": "#4f006e",
+                        "surface-container": "#1a1a1a",
+                        "on-secondary-fixed": "#6b003a",
+                        "surface-variant": "#262626",
+                        "on-primary-container": "#3d0056",
+                        "surface-container-high": "#20201f",
+                        "on-surface-variant": "#adaaaa",
+                        "on-primary-fixed": "#000000",
+                        "on-background": "#ffffff",
+                        "error-container": "#a70138",
+                        "on-error": "#490013",
+                        "on-secondary-container": "#fff5f6",
+                        "secondary-fixed": "#ffc1d4",
+                        "surface-container-lowest": "#000000",
+                        "on-tertiary-fixed": "#064200",
+                        "tertiary-fixed": "#2ff801",
+                        "on-secondary": "#460024",
+                        "secondary": "#ff68a7",
+                        "surface-container-highest": "#262626",
+                        "surface-bright": "#2c2c2c",
+                        "surface": "#0e0e0e",
+                        "on-primary-fixed-variant": "#4b0069"
+                    },
+                    fontFamily: {
+                        "headline": ["Epilogue"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #0e0e0e;
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background selection:bg-primary/30">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full flex justify-between items-center px-6 py-4 max-w-none bg-[#0e0e0e]/80 backdrop-blur-xl z-50 no-border tonal-shift-surface-container-low">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black italic text-transparent bg-clip-text bg-gradient-to-br from-[#de8eff] to-[#d779ff] font-['Epilogue'] tracking-tight">Electric Utility</span>
+<div class="hidden md:flex items-center gap-6 font-['Epilogue'] font-bold tracking-tight">
+<a class="text-[#adaaaa] hover:text-[#de8eff] transition-colors" href="#">Discovery</a>
+<a class="text-[#adaaaa] hover:text-[#de8eff] transition-colors" href="#">Social Feed</a>
+<a class="text-[#de8eff] font-bold border-b-2 border-[#de8eff] pb-1" href="#">Planning</a>
+<a class="text-[#adaaaa] hover:text-[#de8eff] transition-colors" href="#">My Events</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex bg-surface-container-highest rounded-full px-4 py-2 items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm text-on-surface w-48" placeholder="Search tools..." type="text"/>
+</div>
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary-container px-5 py-2 rounded-full font-bold text-sm active:scale-95 transition-all">Create Event</button>
+<span class="material-symbols-outlined text-on-surface-variant hover:bg-[#262626] p-2 rounded-full cursor-pointer transition-all">notifications</span>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/20">
+<img alt="User profile and settings" data-alt="Close up portrait of a smiling user" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhnsRyDrU77ZZXlxygmiqaMLmUiLLpmrTCZb1LOWpriidtOFZf1W8t3NMSiNnm9PQW4Sam1OJisJMZrPSSAH7OS0DXxhLBKbYnQGBUBgyZ0N1Xau7sUA53-55dgMA-BzRJlA8t40v42SQmh5upNb3-hFthyihXUdBzqlahN7VkdsoK_MjcK2ckgsDxED7mmnAePwLxV9zPiySU3AWePjUP23b-axp9cnPQf2D6nP5aHrc-83ewkj6kQ9OVDsSBAYGFkpEqZF3JarKm"/>
+</div>
+</div>
+</nav>
+<!-- SideNavBar (Desktop Only) -->
+<aside class="fixed left-0 top-0 h-full hidden lg:flex flex-col p-4 gap-8 bg-[#131313] w-64 z-40 shadow-[40px_0_40px_-10px_rgba(222,142,255,0.05)] pt-24">
+<div class="px-4">
+<p class="text-[10px] uppercase tracking-[0.2em] text-on-surface-variant font-bold mb-4">Dashboard</p>
+<div class="flex flex-col gap-2">
+<a class="flex items-center gap-3 text-[#adaaaa] px-4 py-3 hover:text-white hover:translate-x-1 transition-transform duration-300 font-['Plus_Jakarta_Sans'] font-medium text-sm" href="#">
+<span class="material-symbols-outlined">explore</span> Discovery
+                </a>
+<a class="flex items-center gap-3 text-[#adaaaa] px-4 py-3 hover:text-white hover:translate-x-1 transition-transform duration-300 font-['Plus_Jakarta_Sans'] font-medium text-sm" href="#">
+<span class="material-symbols-outlined">groups</span> Social Feed
+                </a>
+<a class="flex items-center gap-3 bg-[#262626] text-[#de8eff] rounded-full px-4 py-3 shadow-inner font-['Plus_Jakarta_Sans'] font-medium text-sm" href="#">
+<span class="material-symbols-outlined">architecture</span> Planning
+                </a>
+<a class="flex items-center gap-3 text-[#adaaaa] px-4 py-3 hover:text-white hover:translate-x-1 transition-transform duration-300 font-['Plus_Jakarta_Sans'] font-medium text-sm" href="#">
+<span class="material-symbols-outlined">event_available</span> My Events
+                </a>
+</div>
+</div>
+<div class="mt-auto px-4 pb-8 flex flex-col gap-2">
+<a class="flex items-center gap-3 text-[#adaaaa] px-4 py-3 hover:text-white transition-all font-['Plus_Jakarta_Sans'] font-medium text-sm" href="#">
+<span class="material-symbols-outlined">settings</span> Settings
+            </a>
+<a class="flex items-center gap-3 text-[#adaaaa] px-4 py-3 hover:text-white transition-all font-['Plus_Jakarta_Sans'] font-medium text-sm" href="#">
+<span class="material-symbols-outlined">help</span> Support
+            </a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="lg:ml-64 pt-28 pb-32 px-6 md:px-12 max-w-7xl mx-auto">
+<!-- Header Section -->
+<header class="mb-12">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<h1 class="text-5xl md:text-7xl font-['Epilogue'] font-black tracking-tighter mb-4 leading-none">
+                        Neon Summer <span class="text-primary italic">Rooftop</span>
+</h1>
+<div class="flex gap-4 items-center">
+<span class="bg-secondary/10 text-secondary px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest">Host Mode</span>
+<p class="text-on-surface-variant font-medium">Event Coordination &amp; Logistics</p>
+</div>
+</div>
+<div class="flex -space-x-3">
+<img alt="Collaborator 1" class="w-12 h-12 rounded-full border-2 border-background" data-alt="Avatar of a female collaborator" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCANRuzJSrpbeCuPppAPeEfoWx0ili3HyT5xJDNov1Kap_ab-CeEB2Wmc3HCYmXCqZhgEQv7YpJmYNgAGaEvZ1P3EW44B_H_G7INdF0YkDEjzKtp2_BZXmP813G7HdRhX04P4VyDMOQ4SHSTKAFSQw01SfmnTBWW7AnpAosngKmlCFb0cQ8CJ1NW7-xBLl8YX1skv0c1TFZXC40HeScoKPOki1VfdCYV86FgcP8eYaufqmUL5bV_VreMb9EfTbrY9PbByJ1-QAdRATi"/>
+<img alt="Collaborator 2" class="w-12 h-12 rounded-full border-2 border-background" data-alt="Avatar of a male collaborator" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDY93_T6hsaV048c-g8zHF3j1SPWcPnBUzGtSyt8KtLP0V1nX7nVbQm7D-3wn6Gjppx0XnAQYUaqovC9jQuH1af6_kmvg-cKQ7RA6EYwPA5LfalU9lhiiefQl-X8xLf0J-IfW-3-gOGg0JtXDUGBpDG70jH-C4-FZFmwotI7vQyxhBPiI6BL12DW2_V0qkbkzjc6Ao_Z_VAgi1gSfW9JBvz7HL-GRr7HsmSeNHAqIH7XpHtSDOayXWC76hDGLtjsRrva2s9Hkg3Tte0"/>
+<div class="w-12 h-12 rounded-full border-2 border-background bg-surface-container-highest flex items-center justify-center text-xs font-bold text-primary">+4</div>
+</div>
+</div>
+</header>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Task Checklist (4 cols) -->
+<section class="md:col-span-4 bg-surface-container-low rounded-xl p-8 flex flex-col gap-6">
+<div class="flex items-center justify-between">
+<h3 class="font-['Epilogue'] text-2xl font-bold">To-Do List</h3>
+<span class="material-symbols-outlined text-primary cursor-pointer">add_circle</span>
+</div>
+<div class="space-y-4">
+<div class="flex items-start gap-4 p-4 rounded-lg bg-surface-container-highest/50 group cursor-pointer transition-all hover:bg-surface-container-highest">
+<div class="w-6 h-6 rounded border-2 border-primary/40 flex items-center justify-center group-hover:border-primary">
+<span class="material-symbols-outlined text-primary text-sm opacity-0 group-hover:opacity-100">check</span>
+</div>
+<div>
+<p class="text-sm font-semibold">Confirm DJ Lineup</p>
+<p class="text-xs text-on-surface-variant">Due tomorrow</p>
+</div>
+</div>
+<div class="flex items-start gap-4 p-4 rounded-lg bg-surface-container-highest/50 group cursor-pointer transition-all hover:bg-surface-container-highest">
+<div class="w-6 h-6 rounded border-2 border-tertiary flex items-center justify-center bg-tertiary/20">
+<span class="material-symbols-outlined text-tertiary text-sm">check</span>
+</div>
+<div>
+<p class="text-sm font-semibold text-on-surface-variant line-through">Secure Rooftop Permit</p>
+<p class="text-xs text-tertiary">Completed</p>
+</div>
+</div>
+<div class="flex items-start gap-4 p-4 rounded-lg bg-surface-container-highest/50 group cursor-pointer transition-all hover:bg-surface-container-highest">
+<div class="w-6 h-6 rounded border-2 border-primary/40 flex items-center justify-center"></div>
+<div>
+<p class="text-sm font-semibold">Test Sound System</p>
+<p class="text-xs text-on-surface-variant">High Priority</p>
+</div>
+</div>
+</div>
+<div class="mt-auto">
+<div class="h-2 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-secondary to-tertiary w-[65%]"></div>
+</div>
+<p class="text-[10px] uppercase font-bold tracking-widest text-on-surface-variant mt-2 text-right">65% Vibe Ready</p>
+</div>
+</section>
+<!-- Budget Tracker (8 cols) -->
+<section class="md:col-span-8 bg-surface-container-low rounded-xl p-8 flex flex-col">
+<div class="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-8">
+<div>
+<h3 class="font-['Epilogue'] text-2xl font-bold">Budget Tracker</h3>
+<p class="text-sm text-on-surface-variant">Total Spent: $2,450.00</p>
+</div>
+<div class="flex bg-surface-container-highest rounded-full p-1">
+<button class="px-4 py-1 rounded-full text-xs font-bold bg-primary text-on-primary">Chart</button>
+<button class="px-4 py-1 rounded-full text-xs font-bold text-on-surface-variant">List</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 flex-grow">
+<div class="bg-surface-container-highest/30 p-6 rounded-lg flex flex-col items-center justify-center text-center">
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-2">Venue</p>
+<p class="text-3xl font-['Epilogue'] font-black text-primary">$1,200</p>
+<div class="mt-4 w-full h-1 bg-primary/20 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-3/4"></div>
+</div>
+</div>
+<div class="bg-surface-container-highest/30 p-6 rounded-lg flex flex-col items-center justify-center text-center">
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-2">Catering</p>
+<p class="text-3xl font-['Epilogue'] font-black text-secondary">$850</p>
+<div class="mt-4 w-full h-1 bg-secondary/20 rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-1/2"></div>
+</div>
+</div>
+<div class="bg-surface-container-highest/30 p-6 rounded-lg flex flex-col items-center justify-center text-center">
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mb-2">Sound &amp; FX</p>
+<p class="text-3xl font-['Epilogue'] font-black text-tertiary">$400</p>
+<div class="mt-4 w-full h-1 bg-tertiary/20 rounded-full overflow-hidden">
+<div class="h-full bg-tertiary w-full"></div>
+</div>
+</div>
+</div>
+<button class="mt-8 w-full border border-outline-variant/20 hover:bg-surface-container-highest transition-all py-3 rounded-full text-xs font-bold tracking-widest uppercase">Export Report</button>
+</section>
+<!-- Collaborative 'What to Bring' (7 cols) -->
+<section class="md:col-span-7 bg-surface-container-low rounded-xl p-8">
+<div class="flex items-center justify-between mb-8">
+<h3 class="font-['Epilogue'] text-2xl font-bold">What to Bring</h3>
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant flex items-center justify-center text-xs">+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="p-4 rounded-lg border border-outline-variant/10 bg-surface-container-highest/20">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-tertiary bg-tertiary/10 px-2 py-0.5 rounded">Beverages</span>
+<span class="material-symbols-outlined text-on-surface-variant text-sm">edit</span>
+</div>
+<p class="font-bold mb-1">Ice &amp; Mixers</p>
+<p class="text-xs text-on-surface-variant">Claimed by Alex T.</p>
+</div>
+<div class="p-4 rounded-lg border border-outline-variant/10 bg-surface-container-highest/20">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-secondary bg-secondary/10 px-2 py-0.5 rounded">Atmosphere</span>
+<span class="material-symbols-outlined text-on-surface-variant text-sm">edit</span>
+</div>
+<p class="font-bold mb-1">Neon Glow Sticks (100pk)</p>
+<p class="text-xs text-on-surface-variant italic">Unclaimed</p>
+</div>
+<div class="p-4 rounded-lg border border-outline-variant/10 bg-surface-container-highest/20">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">Snacks</span>
+<span class="material-symbols-outlined text-on-surface-variant text-sm">edit</span>
+</div>
+<p class="font-bold mb-1">Finger Foods</p>
+<p class="text-xs text-on-surface-variant">Claimed by Jordan</p>
+</div>
+<div class="p-4 rounded-lg border border-dashed border-outline-variant bg-transparent flex flex-col items-center justify-center text-on-surface-variant py-6">
+<span class="material-symbols-outlined mb-1">add</span>
+<p class="text-xs font-bold uppercase tracking-widest">Add Item</p>
+</div>
+</div>
+</section>
+<!-- Timeline Planner (5 cols) -->
+<section class="md:col-span-5 bg-surface-container-low rounded-xl p-8">
+<h3 class="font-['Epilogue'] text-2xl font-bold mb-8">Event Timeline</h3>
+<div class="relative space-y-8 before:absolute before:inset-0 before:ml-4 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-primary before:via-secondary before:to-transparent">
+<div class="relative flex items-center gap-6 group">
+<div class="absolute left-0 w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-[0_0_15px_rgba(222,142,255,0.5)]">
+<span class="material-symbols-outlined text-on-primary text-sm" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<div class="ml-10">
+<p class="text-xs font-bold text-primary uppercase tracking-widest">19:00</p>
+<p class="font-bold">Doors Open / Warm-up Set</p>
+</div>
+</div>
+<div class="relative flex items-center gap-6 group">
+<div class="absolute left-0 w-8 h-8 rounded-full bg-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary text-sm" style="font-variation-settings: 'FILL' 1;">restaurant</span>
+</div>
+<div class="ml-10">
+<p class="text-xs font-bold text-secondary uppercase tracking-widest">20:30</p>
+<p class="font-bold">Catering Service Starts</p>
+</div>
+</div>
+<div class="relative flex items-center gap-6 group">
+<div class="absolute left-0 w-8 h-8 rounded-full bg-tertiary flex items-center justify-center">
+<span class="material-symbols-outlined text-on-tertiary text-sm" style="font-variation-settings: 'FILL' 1;">grade</span>
+</div>
+<div class="ml-10">
+<p class="text-xs font-bold text-tertiary uppercase tracking-widest">22:00</p>
+<p class="font-bold">Main DJ Performance</p>
+</div>
+</div>
+<div class="relative flex items-center gap-6 group">
+<div class="absolute left-0 w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">bedtime</span>
+</div>
+<div class="ml-10">
+<p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">01:00</p>
+<p class="font-bold">Event Close</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<div class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-[#0e0e0e]/90 backdrop-blur-2xl rounded-t-[3rem] shadow-[0_-10px_40px_-10px_rgba(222,142,255,0.15)] no-border surface-container-highest-top-edge">
+<div class="flex flex-col items-center justify-center text-[#adaaaa] p-2 hover:text-white transition-colors font-['Plus_Jakarta_Sans'] text-[10px] uppercase tracking-widest">
+<span class="material-symbols-outlined">search</span>
+<span>Explore</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#adaaaa] p-2 hover:text-white transition-colors font-['Plus_Jakarta_Sans'] text-[10px] uppercase tracking-widest">
+<span class="material-symbols-outlined">forum</span>
+<span>Feed</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-gradient-to-br from-[#de8eff] to-[#d779ff] text-black rounded-full w-14 h-14 -translate-y-4 shadow-lg active:scale-90 duration-200 font-['Plus_Jakarta_Sans'] text-[10px] uppercase tracking-widest">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">task_alt</span>
+<span class="hidden">Plan</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#adaaaa] p-2 hover:text-white transition-colors font-['Plus_Jakarta_Sans'] text-[10px] uppercase tracking-widest">
+<span class="material-symbols-outlined">person</span>
+<span>Profile</span>
+</div>
+</div>
+</body></html>

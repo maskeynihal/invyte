@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
-import { Epilogue, Plus_Jakarta_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-
-const epilogue = Epilogue({ subsets: ["latin"], variable: "--font-epilogue" });
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: "--font-plus-jakarta",
+const headlineFont = localFont({
+  src: "./fonts/GeistVF.woff",
+  variable: "--font-website-headline",
+  display: "swap",
+});
+const bodyFont = localFont({
+  src: "./fonts/GeistVF.woff",
+  variable: "--font-website-body",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -24,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${epilogue.variable} ${plusJakartaSans.variable} font-body bg-background text-on-surface`}>
+      <body className={`${headlineFont.variable} ${bodyFont.variable} font-body bg-background text-on-surface`}>
         {children}
       </body>
     </html>

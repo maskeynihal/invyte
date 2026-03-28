@@ -61,9 +61,9 @@ export default {
         "error-dim": "#d73357"
       },
       fontFamily: {
-        "headline": ["Epilogue", "sans-serif"],
-        "body": ["Plus Jakarta Sans", "sans-serif"],
-        "label": ["Plus Jakarta Sans", "sans-serif"]
+        "headline": ["var(--font-website-headline)", "sans-serif"],
+        "body": ["var(--font-website-body)", "sans-serif"],
+        "label": ["var(--font-website-body)", "sans-serif"]
       },
       borderRadius: {
         "DEFAULT": "1rem",
