@@ -39,7 +39,7 @@ export default function GuestRsvpPage() {
       return;
     }
 
-    const attendeeId = await submitGuestRsvp({
+    const response = await submitGuestRsvp({
       eventId: event._id,
       name: formData.name.trim(),
       email: formData.email.trim(),
@@ -52,7 +52,9 @@ export default function GuestRsvpPage() {
       )}`,
     });
 
-    router.push(`/event/${event._id}/pass/${attendeeId}`);
+    router.push(
+      `/event/${event._id}/pass/${response.attendeeId}?access=${encodeURIComponent(response.accessToken)}`,
+    );
   };
 
   if (event === undefined) {

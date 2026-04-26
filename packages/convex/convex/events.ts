@@ -157,6 +157,17 @@ async function signEventAccessToken(payload: {
   return `${encodedPayload}.${signature}`;
 }
 
+async function createAttendeeAccessToken(
+  eventId: Id<"events">,
+  attendeeId: Id<"attendees">,
+) {
+  return await signEventAccessToken({
+    eventId,
+    attendeeId,
+    exp: Date.now() + EVENT_ACCESS_TOKEN_TTL_MS,
+  });
+}
+
 async function verifyEventAccessToken(token: string | null | undefined) {
   if (!token) {
     return null;
@@ -288,6 +299,10 @@ function omitUndefined<T extends Record<string, unknown>>(value: T): T {
 
 function isGoing(status: AttendeeDoc["rsvpStatus"]) {
   return status === "going";
+}
+
+function isHostAttendee(event: EventDoc, attendee: AttendeeDoc) {
+  return attendee.userTokenIdentifier === event.hostId;
 }
 
 async function requireIdentity(ctx: Context) {
@@ -493,6 +508,18 @@ async function resolveCoverImageUrl(ctx: Context, event: EventDoc) {
   return event.coverImage;
 }
 
+async function getGoingAttendeesExcludingHost(ctx: Context, event: EventDoc) {
+  const attendees = await ctx.db
+    .query("attendees")
+    .withIndex("by_event_and_rsvpStatus", (q) =>
+      q.eq("eventId", event._id).eq("rsvpStatus", "going"),
+    )
+    .order("desc")
+    .collect();
+
+  return attendees.filter((attendee) => !isHostAttendee(event, attendee));
+}
+
 async function serializeAttendeePreview(
   ctx: Context,
   attendee: AttendeeDoc,
@@ -525,13 +552,10 @@ async function serializeEventCard(
   event: EventDoc,
   viewerIdentity: ViewerIdentity | null = null,
 ) {
-  const attendees = await ctx.db
-    .query("attendees")
-    .withIndex("by_event_and_rsvpStatus", (q) =>
-      q.eq("eventId", event._id).eq("rsvpStatus", "going"),
-    )
-    .order("desc")
-    .take(4);
+  const attendees = (await getGoingAttendeesExcludingHost(ctx, event)).slice(
+    0,
+    4,
+  );
   const hostUser = await getUserByTokenIdentifier(ctx, event.hostId);
 
   return {
@@ -693,13 +717,7 @@ export const getEventRsvpDetails = query({
     }
 
     const hostUser = await getUserByTokenIdentifier(ctx, event.hostId);
-    const attendees = await ctx.db
-      .query("attendees")
-      .withIndex("by_event_and_rsvpStatus", (q) =>
-        q.eq("eventId", args.id).eq("rsvpStatus", "going"),
-      )
-      .order("desc")
-      .take(24);
+    const attendees = await getGoingAttendeesExcludingHost(ctx, event);
 
     return {
       _id: event._id,
@@ -713,9 +731,11 @@ export const getEventRsvpDetails = query({
       hostName: hostUser?.name ?? event.hostName,
       hostAvatar: hostUser?.avatar ?? event.hostAvatar,
       allowPlusOne: event.allowPlusOne,
-      attendeeCount: normalizeCounter(event.attendeeCount),
+      attendeeCount: attendees.length,
       attendees: await Promise.all(
-        attendees.map((attendee) => serializeAttendeePreview(ctx, attendee)),
+        attendees
+          .slice(0, 24)
+          .map((attendee) => serializeAttendeePreview(ctx, attendee)),
       ),
     };
   },
@@ -733,14 +753,10 @@ export const getEventById = query({
       return null;
     }
     const hostUser = await getUserByTokenIdentifier(ctx, event.hostId);
-    const attendees = await ctx.db
-      .query("attendees")
-      .withIndex("by_event_and_rsvpStatus", (q) =>
-        q.eq("eventId", args.id).eq("rsvpStatus", "going"),
-      )
-      .order("desc")
-      .take(24);
+    const goingAttendees = await getGoingAttendeesExcludingHost(ctx, event);
     const currentUserRsvp = actor.attendee;
+    const viewerCanSeeAttendees =
+      actor.isHost || currentUserRsvp?.rsvpStatus === "going";
     const currentEventLike = actor.tokenIdentifier
       ? await ctx.db
           .query("eventLikes")
@@ -767,9 +783,10 @@ export const getEventById = query({
       hostAvatar: hostUser?.avatar ?? event.hostAvatar,
       hostEmail: event.hostEmail ?? hostUser?.email,
       viewerEmail: actor.email,
+      viewerName: actor.displayName,
       isPublic: event.isPublic,
       allowPlusOne: event.allowPlusOne,
-      attendeeCount: normalizeCounter(event.attendeeCount),
+      attendeeCount: goingAttendees.length,
       commentCount: normalizeCounter(event.commentCount),
       photoCount: normalizeCounter(event.photoCount),
       likeCount: normalizeCounter(event.likeCount),
@@ -777,6 +794,7 @@ export const getEventById = query({
       isMember: actor.isMember,
       viewerCanInteract: actor.isMember,
       viewerCanOpenPlan: actor.isMember,
+      viewerCanSeeAttendees,
       viewerHasLiked: Boolean(currentEventLike),
       currentUserRsvp: currentUserRsvp
         ? {
@@ -784,13 +802,22 @@ export const getEventById = query({
             rsvpStatus: currentUserRsvp.rsvpStatus,
             plusOne: currentUserRsvp.plusOne,
             plusOneName: currentUserRsvp.plusOneName,
+            dietaryRestrictions: currentUserRsvp.dietaryRestrictions,
+            accessToken: await createAttendeeAccessToken(
+              event._id,
+              currentUserRsvp._id,
+            ),
           }
         : null,
-      attendees: await Promise.all(
-        attendees.map((attendee) =>
-          serializeAttendeePreview(ctx, attendee, actor.identity),
-        ),
-      ),
+      attendees: viewerCanSeeAttendees
+        ? await Promise.all(
+            goingAttendees
+              .slice(0, 24)
+              .map((attendee) =>
+                serializeAttendeePreview(ctx, attendee, actor.identity),
+              ),
+          )
+        : [],
     };
   },
 });
@@ -1119,7 +1146,7 @@ export const createEvent = mutation({
 export const getAttendees = query({
   args: { eventId: v.id("events") },
   handler: async (ctx, args) => {
-    const { identity } = await requireHostAccess(ctx, args.eventId);
+    const { identity, event } = await requireHostAccess(ctx, args.eventId);
     const attendees = await ctx.db
       .query("attendees")
       .withIndex("by_event", (q) => q.eq("eventId", args.eventId))
@@ -1127,26 +1154,32 @@ export const getAttendees = query({
       .take(100);
 
     return await Promise.all(
-      attendees.map(async (attendee) => {
-        const resolvedName = await resolveStoredDisplayNameWithUserLookup(
-          ctx,
-          attendee.name,
-          attendee.userTokenIdentifier,
-          identity,
-        );
+      attendees
+        .filter((attendee) => !isHostAttendee(event, attendee))
+        .map(async (attendee) => {
+          const resolvedName = await resolveStoredDisplayNameWithUserLookup(
+            ctx,
+            attendee.name,
+            attendee.userTokenIdentifier,
+            identity,
+          );
 
-        return {
-          _id: attendee._id,
-          name: resolvedName,
-          email: attendee.email,
-          avatar: attendee.avatar ?? avatarFallback(resolvedName),
-          rsvpStatus: attendee.rsvpStatus,
-          responseSource: attendee.responseSource,
-          plusOne: attendee.plusOne,
-          plusOneName: attendee.plusOneName,
-          dietaryRestrictions: attendee.dietaryRestrictions,
-        };
-      }),
+          return {
+            _id: attendee._id,
+            name: resolvedName,
+            email: attendee.email,
+            avatar: attendee.avatar ?? avatarFallback(resolvedName),
+            rsvpStatus: attendee.rsvpStatus,
+            responseSource: attendee.responseSource,
+            plusOne: attendee.plusOne,
+            plusOneName: attendee.plusOneName,
+            dietaryRestrictions: attendee.dietaryRestrictions,
+            passAccessToken:
+              attendee.rsvpStatus === "going"
+                ? await createAttendeeAccessToken(args.eventId, attendee._id)
+                : null,
+          };
+        }),
     );
   },
 });
@@ -1155,9 +1188,16 @@ export const upsertMemberRsvp = mutation({
   args: {
     eventId: v.id("events"),
     rsvpStatus: rsvpStatusValidator,
+    plusOne: v.optional(v.boolean()),
+    plusOneName: v.optional(v.string()),
+    dietaryRestrictions: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const identity = await requireIdentity(ctx);
+    const event = await getEventOrThrow(ctx, args.eventId);
+    if (event.hostId === identity.tokenIdentifier) {
+      throw new Error("The event host does not need to RSVP");
+    }
     const existingRsvp = await ctx.db
       .query("attendees")
       .withIndex("by_event_and_userTokenIdentifier", (q) =>
@@ -1179,6 +1219,9 @@ export const upsertMemberRsvp = mutation({
           email: identity.email ?? undefined,
           avatar: memberAvatar,
           rsvpStatus: args.rsvpStatus,
+          plusOne: event.allowPlusOne ? (args.plusOne ?? false) : false,
+          plusOneName: event.allowPlusOne ? args.plusOneName : undefined,
+          dietaryRestrictions: args.dietaryRestrictions,
           responseSource: "member",
         }),
       });
@@ -1190,7 +1233,13 @@ export const upsertMemberRsvp = mutation({
         Number(nextGoing) - Number(previousGoing),
       );
 
-      return existingRsvp._id;
+      return {
+        attendeeId: existingRsvp._id,
+        accessToken: await createAttendeeAccessToken(
+          args.eventId,
+          existingRsvp._id,
+        ),
+      };
     }
 
     const attendeeId = await ctx.db.insert(
@@ -1201,7 +1250,9 @@ export const upsertMemberRsvp = mutation({
         email: identity.email ?? undefined,
         avatar: memberAvatar,
         rsvpStatus: args.rsvpStatus,
-        plusOne: false,
+        plusOne: event.allowPlusOne ? (args.plusOne ?? false) : false,
+        plusOneName: event.allowPlusOne ? args.plusOneName : undefined,
+        dietaryRestrictions: args.dietaryRestrictions,
         userTokenIdentifier: identity.tokenIdentifier,
         responseSource: "member",
       }),
@@ -1211,7 +1262,85 @@ export const upsertMemberRsvp = mutation({
       await adjustEventCounter(ctx, args.eventId, "attendeeCount", 1);
     }
 
-    return attendeeId;
+    return {
+      attendeeId,
+      accessToken: await createAttendeeAccessToken(args.eventId, attendeeId),
+    };
+  },
+});
+
+export const updateAccessTokenRsvp = mutation({
+  args: {
+    eventId: v.id("events"),
+    accessToken: v.string(),
+    rsvpStatus: rsvpStatusValidator,
+  },
+  handler: async (ctx, args) => {
+    const attendee = await getSignedAccessAttendee(
+      ctx,
+      args.eventId,
+      args.accessToken,
+    );
+    if (!attendee) {
+      throw new Error("A valid attendee access token is required");
+    }
+
+    const previousGoing = isGoing(attendee.rsvpStatus);
+    const nextGoing = isGoing(args.rsvpStatus);
+
+    await ctx.db.patch(attendee._id, {
+      rsvpStatus: args.rsvpStatus,
+    });
+
+    await adjustEventCounter(
+      ctx,
+      args.eventId,
+      "attendeeCount",
+      Number(nextGoing) - Number(previousGoing),
+    );
+
+    return {
+      attendeeId: attendee._id,
+      accessToken: await createAttendeeAccessToken(args.eventId, attendee._id),
+    };
+  },
+});
+
+export const clearHostRsvp = mutation({
+  args: {
+    eventId: v.id("events"),
+  },
+  handler: async (ctx, args) => {
+    const { identity, event } = await assertHost(ctx, args.eventId);
+    const hostRsvps = await ctx.db
+      .query("attendees")
+      .withIndex("by_event_and_userTokenIdentifier", (q) =>
+        q
+          .eq("eventId", args.eventId)
+          .eq("userTokenIdentifier", identity.tokenIdentifier),
+      )
+      .collect();
+
+    let removedGoingCount = 0;
+    for (const attendee of hostRsvps) {
+      if (isGoing(attendee.rsvpStatus)) {
+        removedGoingCount += 1;
+      }
+      await ctx.db.delete(attendee._id);
+    }
+
+    if (removedGoingCount > 0) {
+      await adjustEventCounter(
+        ctx,
+        event._id,
+        "attendeeCount",
+        -removedGoingCount,
+      );
+    }
+
+    return {
+      removedCount: hostRsvps.length,
+    };
   },
 });
 
@@ -1297,7 +1426,13 @@ export const submitGuestRsvp = mutation({
         Number(nextGoing) - Number(previousGoing),
       );
 
-      return existingRsvp._id;
+      return {
+        attendeeId: existingRsvp._id,
+        accessToken: await createAttendeeAccessToken(
+          args.eventId,
+          existingRsvp._id,
+        ),
+      };
     }
 
     const attendeeId = await ctx.db.insert("attendees", {
@@ -1317,7 +1452,10 @@ export const submitGuestRsvp = mutation({
       await adjustEventCounter(ctx, args.eventId, "attendeeCount", 1);
     }
 
-    return attendeeId;
+    return {
+      attendeeId,
+      accessToken: await createAttendeeAccessToken(args.eventId, attendeeId),
+    };
   },
 });
 
@@ -1325,6 +1463,7 @@ export const getAttendeePass = query({
   args: {
     eventId: v.id("events"),
     attendeeId: v.id("attendees"),
+    accessToken: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const attendee = await ctx.db.get(args.attendeeId);
@@ -1336,18 +1475,32 @@ export const getAttendeePass = query({
     if (!event) {
       return null;
     }
+    const identity =
+      (await ctx.auth.getUserIdentity()) as ViewerIdentity | null;
+    const signedAccessAttendee = await getSignedAccessAttendee(
+      ctx,
+      args.eventId,
+      args.accessToken,
+    );
+    const canViewPass =
+      identity?.tokenIdentifier === event.hostId ||
+      identity?.tokenIdentifier === attendee.userTokenIdentifier ||
+      signedAccessAttendee?._id === attendee._id;
+
+    if (!canViewPass) {
+      return null;
+    }
     const resolvedAttendeeName = await resolveStoredDisplayNameWithUserLookup(
       ctx,
       attendee.name,
       attendee.userTokenIdentifier,
-      null,
+      identity,
     );
     const hostUser = await getUserByTokenIdentifier(ctx, event.hostId);
-    const eventAccessToken = await signEventAccessToken({
-      eventId: event._id,
-      attendeeId: attendee._id,
-      exp: Date.now() + EVENT_ACCESS_TOKEN_TTL_MS,
-    });
+    const eventAccessToken = await createAttendeeAccessToken(
+      event._id,
+      attendee._id,
+    );
 
     return {
       attendee: {
@@ -1368,6 +1521,7 @@ export const getAttendeePass = query({
         coverImage: await resolveCoverImageUrl(ctx, event),
         hostName: hostUser?.name ?? event.hostName,
         hostAvatar: hostUser?.avatar ?? event.hostAvatar,
+        hostEmail: event.hostEmail ?? hostUser?.email,
       },
       eventAccessToken,
       qrValue: `${event._id}:${attendee._id}`,

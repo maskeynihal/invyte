@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { RsvpButton } from "@invyte/ui/rsvp-button";
@@ -9,6 +9,8 @@ import { GlassCard } from "@invyte/ui/glass-card";
 import AppShell from "@/components/AppShell";
 import { useMutation, useQuery } from "convex/react";
 import { api, type Id } from "@invyte/convex";
+
+type RsvpStatus = "going" | "maybe" | "not-going" | null;
 
 type EventDetailScreenProps = {
   accessToken?: string | null;
@@ -24,17 +26,28 @@ export default function EventDetailScreen({
   const router = useRouter();
   const { user } = useUser();
   const photoInputRef = useRef<HTMLInputElement>(null);
+  const copyFeedbackTimeoutRef = useRef<number | null>(null);
+  const hostCleanupRequestedRef = useRef(false);
   const [newComment, setNewComment] = useState("");
+  const [memberRsvpStatus, setMemberRsvpStatus] = useState<RsvpStatus>(null);
+  const [memberRsvpForm, setMemberRsvpForm] = useState({
+    plusOne: false,
+    plusOneName: "",
+    dietaryRestrictions: "",
+  });
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+  const [isSavingRsvp, setIsSavingRsvp] = useState(false);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [photoError, setPhotoError] = useState<string | null>(null);
+  const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
 
   const access = useQuery(api.users.getCurrentUserAccess);
   const canUploadImages =
     !publicAccess && (access?.effectiveFeatures.canImageUpdate ?? false);
   const canViewEventImages =
     Boolean(accessToken) ||
-    (!publicAccess && (access?.effectiveFeatures.canImageViewFromEvents ?? false));
+    (!publicAccess &&
+      (access?.effectiveFeatures.canImageViewFromEvents ?? false));
   const event = useQuery(api.events.getEventById, {
     id: eventId,
     accessToken: accessToken ?? undefined,
@@ -54,6 +67,8 @@ export default function EventDetailScreen({
       : "skip",
   );
   const upsertMemberRsvp = useMutation(api.events.upsertMemberRsvp);
+  const updateAccessTokenRsvp = useMutation(api.events.updateAccessTokenRsvp);
+  const clearHostRsvp = useMutation(api.events.clearHostRsvp);
   const addCommentMutation = useMutation(api.events.addComment);
   const toggleCommentReactionMutation = useMutation(
     api.events.toggleCommentReaction,
@@ -69,14 +84,33 @@ export default function EventDetailScreen({
         )}`
       : `/event/${event._id}/plan`
     : null;
+  const canViewGoingAttendees = event?.viewerCanSeeAttendees ?? false;
+
+  useEffect(() => {
+    if (!event || publicAccess || event.isHost) {
+      return;
+    }
+
+    setMemberRsvpStatus(event.currentUserRsvp?.rsvpStatus ?? null);
+    setMemberRsvpForm({
+      plusOne: event.currentUserRsvp?.plusOne ?? false,
+      plusOneName: event.currentUserRsvp?.plusOneName ?? "",
+      dietaryRestrictions: event.currentUserRsvp?.dietaryRestrictions ?? "",
+    });
+  }, [event, publicAccess]);
+
+  useEffect(() => {
+    if (!event?.isHost || hostCleanupRequestedRef.current) {
+      return;
+    }
+
+    hostCleanupRequestedRef.current = true;
+    void clearHostRsvp({ eventId });
+  }, [clearHostRsvp, event?.isHost, eventId]);
 
   const handleAddComment = async () => {
     const trimmedComment = newComment.trim();
-    if (
-      !trimmedComment ||
-      isSubmittingComment ||
-      !event?.viewerCanInteract
-    ) {
+    if (!trimmedComment || isSubmittingComment || !event?.viewerCanInteract) {
       return;
     }
 
@@ -93,20 +127,68 @@ export default function EventDetailScreen({
     }
   };
 
-  const handleRsvpSelect = async (
-    status: "going" | "maybe" | "not-going" | null,
-  ) => {
-    if (!status || publicAccess) {
+  const handleRsvpSelect = (status: RsvpStatus) => {
+    if (!status) {
       return;
     }
 
-    const attendeeId = await upsertMemberRsvp({
-      eventId,
-      rsvpStatus: status,
-    });
+    setMemberRsvpStatus(status);
+  };
+
+  const handleSaveRsvp = async () => {
+    if (!event || !memberRsvpStatus || isSavingRsvp) {
+      return;
+    }
+
+    setIsSavingRsvp(true);
+    try {
+      const response = await upsertMemberRsvp({
+        eventId,
+        rsvpStatus: memberRsvpStatus,
+        plusOne: memberRsvpStatus === "going" ? memberRsvpForm.plusOne : false,
+        plusOneName:
+          memberRsvpStatus === "going"
+            ? memberRsvpForm.plusOneName.trim() || undefined
+            : undefined,
+        dietaryRestrictions:
+          memberRsvpStatus === "going"
+            ? memberRsvpForm.dietaryRestrictions.trim() || undefined
+            : undefined,
+      });
+
+      if (memberRsvpStatus === "going") {
+        const search = response.accessToken
+          ? `?access=${encodeURIComponent(response.accessToken)}`
+          : "";
+        router.push(`/event/${eventId}/pass/${response.attendeeId}${search}`);
+      }
+    } finally {
+      setIsSavingRsvp(false);
+    }
+  };
+
+  const handlePublicRsvpSelect = async (status: RsvpStatus) => {
+    if (!status) {
+      return;
+    }
+
+    const response =
+      publicAccess && accessToken
+        ? await updateAccessTokenRsvp({
+            eventId,
+            accessToken,
+            rsvpStatus: status,
+          })
+        : await upsertMemberRsvp({
+            eventId,
+            rsvpStatus: status,
+          });
 
     if (status === "going") {
-      router.push(`/event/${eventId}/pass/${attendeeId}`);
+      const search = response.accessToken
+        ? `?access=${encodeURIComponent(response.accessToken)}`
+        : "";
+      router.push(`/event/${eventId}/pass/${response.attendeeId}${search}`);
     }
   };
 
@@ -121,6 +203,18 @@ export default function EventDetailScreen({
     });
   };
 
+  const showCopyFeedback = (message: string) => {
+    if (copyFeedbackTimeoutRef.current) {
+      window.clearTimeout(copyFeedbackTimeoutRef.current);
+    }
+
+    setCopyFeedback(message);
+    copyFeedbackTimeoutRef.current = window.setTimeout(() => {
+      setCopyFeedback(null);
+      copyFeedbackTimeoutRef.current = null;
+    }, 2200);
+  };
+
   const handleCopyRsvpLink = async () => {
     if (!event) {
       return;
@@ -128,6 +222,7 @@ export default function EventDetailScreen({
 
     const shareUrl = `${window.location.origin}/event/${event._id}/rsvp`;
     await navigator.clipboard.writeText(shareUrl);
+    showCopyFeedback("RSVP link copied");
   };
 
   const handleSendInvitationEmail = () => {
@@ -139,14 +234,22 @@ export default function EventDetailScreen({
       event.viewerEmail ?? user?.primaryEmailAddress?.emailAddress ?? "";
     const hostEmail = event.hostEmail ?? "";
     const rsvpLink = `${window.location.origin}/event/${event._id}/rsvp`;
-    const passLink = event.currentUserRsvp?.id
-      ? `${window.location.origin}/event/${event._id}/pass/${event.currentUserRsvp.id}`
-      : "Pass link available after RSVP";
+    const passLink =
+      event.currentUserRsvp?.id && event.currentUserRsvp.accessToken
+        ? `${window.location.origin}/event/${event._id}/pass/${event.currentUserRsvp.id}?access=${encodeURIComponent(event.currentUserRsvp.accessToken)}`
+        : event.currentUserRsvp?.id
+          ? `${window.location.origin}/event/${event._id}/pass/${event.currentUserRsvp.id}`
+          : "Pass link available after RSVP";
 
-    const subject = `Invitation: ${event.title}`;
     const bodyLines = [
-      `From: ${viewerEmail || "(your email)"}`,
+      `From: ${viewerEmail || "(your email app will choose the sender)"}`,
+      `To: ${viewerEmail || "(your email)"}`,
+      ...(hostEmail ? [`CC: ${hostEmail}`] : []),
+      "",
       `Event: ${event.title}`,
+      `Host: ${event.hostName}`,
+      `Category: ${event.category}`,
+      `Vibe: ${event.vibe}`,
       `Date: ${event.date}`,
       `Time: ${event.time}`,
       `Location: ${event.location}`,
@@ -159,12 +262,70 @@ export default function EventDetailScreen({
     ];
 
     const params = new URLSearchParams({
-      subject,
+      subject: `Invitation: ${event.title}`,
       body: bodyLines.join("\n"),
       ...(hostEmail ? { cc: hostEmail } : {}),
     });
 
     window.location.href = `mailto:${viewerEmail}?${params.toString()}`;
+  };
+
+  const handleCopyPassLink = async (
+    attendeeId: Id<"attendees">,
+    attendeeAccessToken?: string | null,
+  ) => {
+    if (!event) {
+      return;
+    }
+
+    const search = attendeeAccessToken
+      ? `?access=${encodeURIComponent(attendeeAccessToken)}`
+      : "";
+    const passUrl = `${window.location.origin}/event/${event._id}/pass/${attendeeId}${search}`;
+    await navigator.clipboard.writeText(passUrl);
+    showCopyFeedback("Pass link copied");
+  };
+
+  const handleSendPassEmail = ({
+    attendeeId,
+    attendeeName,
+    attendeeEmail,
+    attendeeAccessToken,
+  }: {
+    attendeeId: Id<"attendees">;
+    attendeeName: string;
+    attendeeEmail?: string | null;
+    attendeeAccessToken?: string | null;
+  }) => {
+    if (!event || !attendeeEmail) {
+      return;
+    }
+
+    const passUrl = `${window.location.origin}/event/${event._id}/pass/${attendeeId}${
+      attendeeAccessToken
+        ? `?access=${encodeURIComponent(attendeeAccessToken)}`
+        : ""
+    }`;
+    const eventDetailsUrl = attendeeAccessToken
+      ? `${window.location.origin}/event/${event._id}/details?access=${encodeURIComponent(attendeeAccessToken)}`
+      : `${window.location.origin}/event/${event._id}/rsvp`;
+
+    const params = new URLSearchParams({
+      subject: `Your event pass for ${event.title}`,
+      body: [
+        `Hi ${attendeeName},`,
+        "",
+        `Here is your pass for ${event.title}.`,
+        `Date: ${event.date}`,
+        `Time: ${event.time}`,
+        `Location: ${event.location}`,
+        "",
+        `Open pass: ${passUrl}`,
+        `Event details: ${eventDetailsUrl}`,
+      ].join("\n"),
+    });
+
+    window.location.href = `mailto:${attendeeEmail}?${params.toString()}`;
   };
 
   const handleCommentReaction = async (
@@ -256,6 +417,11 @@ export default function EventDetailScreen({
       </AppShell>
     );
   }
+
+  const viewerEmail =
+    event.viewerEmail ?? user?.primaryEmailAddress?.emailAddress ?? "";
+  const viewerName =
+    user?.fullName || user?.firstName || event.viewerName || "";
 
   return (
     <AppShell>
@@ -371,33 +537,166 @@ export default function EventDetailScreen({
 
       <section className="mb-6 animate-slide-up">
         <div className="flex items-center justify-between mb-3">
-          <label className="label-text block">Your RSVP</label>
+          <label className="label-text block">
+            {event.isHost ? "Host Status" : "Your RSVP"}
+          </label>
           {event.currentUserRsvp?.rsvpStatus === "going" && (
             <button
               className="text-xs font-label font-bold text-primary uppercase tracking-wider"
-              onClick={() =>
-                router.push(`/event/${event._id}/pass/${event.currentUserRsvp?.id}`)
-              }
+              onClick={() => {
+                const search = event.currentUserRsvp?.accessToken
+                  ? `?access=${encodeURIComponent(event.currentUserRsvp.accessToken)}`
+                  : "";
+                router.push(
+                  `/event/${event._id}/pass/${event.currentUserRsvp?.id}${search}`,
+                );
+              }}
               type="button"
             >
               Open Pass
             </button>
           )}
         </div>
-        {publicAccess ? (
+        {event.isHost ? (
           <GlassCard className="p-4">
             <p className="text-sm text-on-surface">
-              RSVP status:{" "}
-              <span className="font-bold capitalize">
-                {event.currentUserRsvp?.rsvpStatus ?? "confirmed"}
-              </span>
+              You&apos;re the host for this event, so you don&apos;t need to
+              RSVP.
+            </p>
+            <p className="text-xs text-on-surface-variant mt-2">
+              Guests will see you as the host instead of as an attendee.
             </p>
           </GlassCard>
+        ) : publicAccess ? (
+          <>
+            <RsvpButton
+              status={event.currentUserRsvp?.rsvpStatus ?? null}
+              onSelect={handlePublicRsvpSelect}
+            />
+            <p className="text-xs text-on-surface-variant mt-3">
+              You can update your RSVP status any time.
+            </p>
+          </>
         ) : (
-          <RsvpButton
-            status={event.currentUserRsvp?.rsvpStatus ?? null}
-            onSelect={handleRsvpSelect}
-          />
+          <div className="space-y-4">
+            <RsvpButton status={memberRsvpStatus} onSelect={handleRsvpSelect} />
+
+            {memberRsvpStatus && (
+              <GlassCard className="p-4 space-y-4 animate-slide-up">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <label className="label-text">Name</label>
+                    <input
+                      className="input-field opacity-80"
+                      readOnly
+                      value={viewerName}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="label-text">Email</label>
+                    <input
+                      className="input-field opacity-80"
+                      readOnly
+                      type="email"
+                      value={viewerEmail}
+                    />
+                  </div>
+                </div>
+
+                {memberRsvpStatus === "going" && event.allowPlusOne && (
+                  <>
+                    <div className="glass-card rounded-2xl p-4 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className="material-symbols-outlined text-secondary">
+                          group_add
+                        </span>
+                        <div>
+                          <p className="font-label font-bold text-sm">
+                            Bringing a +1?
+                          </p>
+                          <p className="text-xs text-on-surface-variant">
+                            Add a guest
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() =>
+                          setMemberRsvpForm((current) => ({
+                            ...current,
+                            plusOne: !current.plusOne,
+                            plusOneName: current.plusOne
+                              ? ""
+                              : current.plusOneName,
+                          }))
+                        }
+                        className={`w-12 h-7 rounded-full transition-all duration-300 relative ${
+                          memberRsvpForm.plusOne
+                            ? "bg-secondary"
+                            : "bg-surface-container-highest"
+                        }`}
+                        type="button"
+                      >
+                        <div
+                          className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-all duration-300 ${
+                            memberRsvpForm.plusOne ? "left-6" : "left-1"
+                          }`}
+                        />
+                      </button>
+                    </div>
+
+                    {memberRsvpForm.plusOne && (
+                      <div className="space-y-2 animate-slide-up">
+                        <label className="label-text">+1 Name</label>
+                        <input
+                          className="input-field"
+                          placeholder="Your guest's name"
+                          value={memberRsvpForm.plusOneName}
+                          onChange={(inputEvent) =>
+                            setMemberRsvpForm((current) => ({
+                              ...current,
+                              plusOneName: inputEvent.target.value,
+                            }))
+                          }
+                        />
+                      </div>
+                    )}
+                  </>
+                )}
+
+                {memberRsvpStatus === "going" && (
+                  <div className="space-y-2">
+                    <label className="label-text">
+                      Anything else the host should know?
+                    </label>
+                    <input
+                      className="input-field"
+                      placeholder="Add a note for the host"
+                      value={memberRsvpForm.dietaryRestrictions}
+                      onChange={(inputEvent) =>
+                        setMemberRsvpForm((current) => ({
+                          ...current,
+                          dietaryRestrictions: inputEvent.target.value,
+                        }))
+                      }
+                    />
+                  </div>
+                )}
+
+                <button
+                  className="btn-primary w-full disabled:opacity-50"
+                  disabled={isSavingRsvp}
+                  onClick={handleSaveRsvp}
+                  type="button"
+                >
+                  {isSavingRsvp ? "Saving RSVP" : "Save RSVP"}
+                </button>
+              </GlassCard>
+            )}
+
+            <p className="text-xs text-on-surface-variant">
+              You can review and update your RSVP details any time.
+            </p>
+          </div>
         )}
       </section>
 
@@ -424,29 +723,69 @@ export default function EventDetailScreen({
             Copy RSVP Link
           </button>
         </div>
-        <div className="flex -space-x-3 mb-2">
-          {event.attendees.map((attendee) => (
-            <div
-              key={attendee.id}
-              className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-background"
-            >
-              <Image
-                alt={attendee.name}
-                className="object-cover"
-                fill
-                src={attendee.avatar}
-                unoptimized
-              />
+        {canViewGoingAttendees ? (
+          <div className="space-y-3">
+            <div className="flex -space-x-3">
+              {event.attendees.map((attendee) => (
+                <div
+                  key={attendee.id}
+                  className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-background"
+                >
+                  <Image
+                    alt={attendee.name}
+                    className="object-cover"
+                    fill
+                    src={attendee.avatar}
+                    unoptimized
+                  />
+                </div>
+              ))}
+              {event.attendeeCount > event.attendees.length && (
+                <div className="w-10 h-10 rounded-full bg-surface-container-high border-2 border-background flex items-center justify-center">
+                  <span className="text-xs font-bold text-on-surface-variant">
+                    +{event.attendeeCount - event.attendees.length}
+                  </span>
+                </div>
+              )}
             </div>
-          ))}
-          {event.attendeeCount > event.attendees.length && (
-            <div className="w-10 h-10 rounded-full bg-surface-container-high border-2 border-background flex items-center justify-center">
-              <span className="text-xs font-bold text-on-surface-variant">
-                +{event.attendeeCount - event.attendees.length}
-              </span>
+
+            <div className="space-y-2">
+              {event.attendees.map((attendee) => (
+                <GlassCard key={`${attendee.id}-name`} className="p-3">
+                  <div className="flex items-center gap-3">
+                    <div className="relative w-9 h-9 rounded-full overflow-hidden">
+                      <Image
+                        alt={attendee.name}
+                        className="object-cover"
+                        fill
+                        src={attendee.avatar}
+                        unoptimized
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold text-on-surface truncate">
+                        {attendee.name}
+                      </p>
+                      <p className="text-xs text-on-surface-variant">
+                        {attendee.plusOne && attendee.plusOneName
+                          ? `Bringing ${attendee.plusOneName}`
+                          : "Going"}
+                      </p>
+                    </div>
+                  </div>
+                </GlassCard>
+              ))}
             </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <GlassCard className="p-4">
+            <p className="text-sm text-on-surface-variant">
+              RSVP as{" "}
+              <span className="font-semibold text-on-surface">Going</span> to
+              see who else is attending.
+            </p>
+          </GlassCard>
+        )}
       </section>
 
       <div className="grid grid-cols-3 gap-3 mb-6">
@@ -543,6 +882,38 @@ export default function EventDetailScreen({
                     </span>
                   </div>
 
+                  {attendee.rsvpStatus === "going" && (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <button
+                        className="text-[10px] font-label font-bold uppercase tracking-wider px-3 py-2 rounded-full border border-primary/30 text-primary"
+                        onClick={() =>
+                          handleCopyPassLink(
+                            attendee._id,
+                            attendee.passAccessToken,
+                          )
+                        }
+                        type="button"
+                      >
+                        Copy Pass Link
+                      </button>
+                      <button
+                        className="text-[10px] font-label font-bold uppercase tracking-wider px-3 py-2 rounded-full border border-outline-variant/20 text-on-surface-variant disabled:opacity-50"
+                        disabled={!attendee.email}
+                        onClick={() =>
+                          handleSendPassEmail({
+                            attendeeId: attendee._id,
+                            attendeeName: attendee.name,
+                            attendeeEmail: attendee.email,
+                            attendeeAccessToken: attendee.passAccessToken,
+                          })
+                        }
+                        type="button"
+                      >
+                        Email Pass
+                      </button>
+                    </div>
+                  )}
+
                   {(attendee.plusOne ||
                     attendee.plusOneName ||
                     attendee.dietaryRestrictions) && (
@@ -625,7 +996,9 @@ export default function EventDetailScreen({
             ))}
           </div>
         )}
-        {photoError && <p className="text-xs text-red-300 mt-2">{photoError}</p>}
+        {photoError && (
+          <p className="text-xs text-red-300 mt-2">{photoError}</p>
+        )}
       </section>
 
       <section className="mb-6">
@@ -643,6 +1016,12 @@ export default function EventDetailScreen({
             }
             value={newComment}
             onChange={(event) => setNewComment(event.target.value)}
+            onKeyDown={(keyEvent) => {
+              if (keyEvent.key === "Enter") {
+                keyEvent.preventDefault();
+                void handleAddComment();
+              }
+            }}
           />
           <button
             className="w-10 h-10 rounded-full bg-primary/20 text-primary flex items-center justify-center active:scale-95 transition-all disabled:opacity-50"
@@ -718,6 +1097,14 @@ export default function EventDetailScreen({
           )}
         </div>
       </section>
+
+      {copyFeedback && (
+        <div className="fixed inset-x-4 bottom-6 z-50 flex justify-center pointer-events-none">
+          <div className="rounded-full border border-primary/30 bg-surface-container-high/95 px-4 py-2 text-xs font-label font-bold uppercase tracking-wider text-primary shadow-glow-purple backdrop-blur-sm">
+            {copyFeedback}
+          </div>
+        </div>
+      )}
     </AppShell>
   );
 }

@@ -1,17 +1,24 @@
 "use client";
 
 import Image from "next/image";
-import { useParams, useRouter } from "next/navigation";
+import { useRef, useState } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api, type Id } from "@invyte/convex";
+import { jsPDF } from "jspdf";
 import { QRCodeCanvas } from "qrcode.react";
 
 export default function EntryPassPage() {
   const params = useParams<{ id: Id<"events">; attendeeId: Id<"attendees"> }>();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const qrWrapperRef = useRef<HTMLDivElement>(null);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+  const accessToken = searchParams.get("access");
   const pass = useQuery(api.events.getAttendeePass, {
     eventId: params.id,
     attendeeId: params.attendeeId,
+    accessToken: accessToken ?? undefined,
   });
 
   if (pass === undefined) {
@@ -37,10 +44,13 @@ export default function EntryPassPage() {
         ? "Maybe"
         : "Not Going";
   const passPath = `/event/${pass.event._id}/pass/${pass.attendee._id}`;
+  const signedPassPath = `${passPath}?access=${encodeURIComponent(
+    pass.eventAccessToken,
+  )}`;
   const passUrl =
     typeof window === "undefined"
-      ? passPath
-      : `${window.location.origin}${passPath}`;
+      ? signedPassPath
+      : `${window.location.origin}${signedPassPath}`;
   const signedEventPath = `/event/${pass.event._id}/details?access=${encodeURIComponent(
     pass.eventAccessToken,
   )}`;
@@ -48,6 +58,128 @@ export default function EntryPassPage() {
     url: passUrl,
     code: pass.qrValue,
   });
+
+  const handleDownloadPdf = () => {
+    const qrCanvas = qrWrapperRef.current?.querySelector("canvas");
+    if (!qrCanvas || isDownloadingPdf) {
+      return;
+    }
+
+    setIsDownloadingPdf(true);
+    try {
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "pt",
+        format: "a4",
+      });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 40;
+      const cardWidth = pageWidth - margin * 2;
+
+      pdf.setFillColor(18, 18, 24);
+      pdf.rect(0, 0, pageWidth, pageHeight, "F");
+      pdf.setFillColor(34, 32, 44);
+      pdf.roundedRect(margin, 44, cardWidth, pageHeight - 88, 24, 24, "F");
+      pdf.setDrawColor(189, 126, 255);
+      pdf.setLineWidth(1);
+      pdf.roundedRect(margin, 44, cardWidth, pageHeight - 88, 24, 24, "S");
+
+      pdf.setTextColor(189, 126, 255);
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(12);
+      pdf.text("INVYTE EVENT PASS", margin + 24, 82);
+
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(24);
+      pdf.text(pass.event.title, margin + 24, 118, {
+        maxWidth: cardWidth - 48,
+      });
+
+      pdf.setFontSize(11);
+      pdf.setTextColor(191, 191, 204);
+      const detailsTop = 158;
+      pdf.text(`Guest: ${pass.attendee.name}`, margin + 24, detailsTop);
+      pdf.text(`Status: ${statusLabel}`, margin + 24, detailsTop + 22);
+      pdf.text(`Date: ${pass.event.date}`, margin + 24, detailsTop + 44);
+      pdf.text(`Time: ${pass.event.time}`, margin + 24, detailsTop + 66);
+      pdf.text(
+        `Location: ${pass.event.location}`,
+        margin + 24,
+        detailsTop + 88,
+        {
+          maxWidth: cardWidth - 240,
+        },
+      );
+      pdf.text(`Host: ${pass.event.hostName}`, margin + 24, detailsTop + 128);
+
+      pdf.setFillColor(255, 255, 255);
+      pdf.roundedRect(pageWidth - margin - 180, 150, 140, 140, 20, 20, "F");
+      pdf.addImage(
+        qrCanvas.toDataURL("image/png"),
+        "PNG",
+        pageWidth - margin - 162,
+        168,
+        104,
+        104,
+      );
+
+      pdf.setDrawColor(90, 90, 106);
+      pdf.setLineDashPattern([5, 5], 0);
+      pdf.line(margin + 24, 332, pageWidth - margin - 24, 332);
+      pdf.setLineDashPattern([], 0);
+
+      pdf.setFontSize(10);
+      pdf.setTextColor(191, 191, 204);
+      const notes = pdf.splitTextToSize(
+        `Open pass: ${passUrl}\nEvent details: ${
+          typeof window === "undefined"
+            ? signedEventPath
+            : `${window.location.origin}${signedEventPath}`
+        }`,
+        cardWidth - 48,
+      );
+      pdf.text(notes, margin + 24, 362);
+
+      const fileName = `${pass.event.title}-${pass.attendee.name}-pass`
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+      pdf.save(`${fileName || "event-pass"}.pdf`);
+    } finally {
+      setIsDownloadingPdf(false);
+    }
+  };
+
+  const handleSendPassEmail = () => {
+    if (!pass.attendee.email) {
+      return;
+    }
+
+    const params = new URLSearchParams({
+      cc: pass.event.hostEmail ?? "",
+      subject: `Your pass for ${pass.event.title}`,
+      body: [
+        `Hi ${pass.attendee.name},`,
+        "",
+        `Here is your event pass for ${pass.event.title}.`,
+        `Date: ${pass.event.date}`,
+        `Time: ${pass.event.time}`,
+        `Location: ${pass.event.location}`,
+        "",
+        `Open pass: ${passUrl}`,
+        `Event details: ${
+          typeof window === "undefined"
+            ? signedEventPath
+            : `${window.location.origin}${signedEventPath}`
+        }`,
+      ].join("\n"),
+    });
+
+    console.log({ p: params.toString() });
+
+    window.location.href = `mailto:${pass.attendee.email}?${params.toString()}`;
+  };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-6">
@@ -127,7 +259,10 @@ export default function EntryPassPage() {
               </div>
             </div>
             <div className="flex justify-center py-4">
-              <div className="w-40 h-40 rounded-2xl bg-white flex items-center justify-center">
+              <div
+                ref={qrWrapperRef}
+                className="w-40 h-40 rounded-2xl bg-white flex items-center justify-center"
+              >
                 <QRCodeCanvas
                   value={qrPayload}
                   size={124}
@@ -149,6 +284,23 @@ export default function EntryPassPage() {
         <p className="text-center text-[10px] text-outline uppercase tracking-widest mt-6">
           Show this pass at the door
         </p>
+        <div className="grid grid-cols-2 gap-3 mt-4">
+          <button
+            className="btn-primary"
+            onClick={handleDownloadPdf}
+            type="button"
+          >
+            {isDownloadingPdf ? "Preparing PDF" : "Download PDF"}
+          </button>
+          <button
+            className="btn-secondary disabled:opacity-50"
+            disabled={!pass.attendee.email}
+            onClick={handleSendPassEmail}
+            type="button"
+          >
+            Send Pass Email
+          </button>
+        </div>
         <button
           className="btn-secondary w-full mt-4"
           onClick={() => router.push(signedEventPath)}
