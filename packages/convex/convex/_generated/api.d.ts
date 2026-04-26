@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as entitlements from "../entitlements.js";
 import type * as events from "../events.js";
 import type * as users from "../users.js";
 
@@ -18,6 +19,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  entitlements: typeof entitlements;
   events: typeof events;
   users: typeof users;
 }>;

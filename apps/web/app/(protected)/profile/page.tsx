@@ -13,8 +13,14 @@ export default function ProfilePage() {
   const { isLoading, isAuthenticated } = useConvexAuth();
   const { isLoaded: isUserLoaded, user } = useUser();
   const profile = useQuery(api.events.getProfileData, isAuthenticated ? {} : "skip");
+  const access = useQuery(api.users.getCurrentUserAccess, isAuthenticated ? {} : "skip");
 
-  if (isLoading || !isUserLoaded || (isAuthenticated && profile === undefined)) {
+  if (
+    isLoading ||
+    !isUserLoaded ||
+    (isAuthenticated && profile === undefined) ||
+    (isAuthenticated && access === undefined)
+  ) {
     return (
       <AppShell>
         <div className="flex justify-center items-center h-64">
@@ -32,14 +38,20 @@ export default function ProfilePage() {
     return null;
   }
 
+  if (access === undefined || access === null) {
+    return null;
+  }
+
   const memberProfile = profile;
+  const canCreateEvents = access.effectiveFeatures.canEventCreation;
 
   const email = user?.primaryEmailAddress?.emailAddress ?? "Signed in with Clerk";
+  const emailHandle = user?.primaryEmailAddress?.emailAddress?.split("@")[0];
+  const displayName = user?.fullName ?? user?.firstName ?? "Your profile";
   const handle =
     user?.username ??
-    user?.primaryEmailAddress?.emailAddress.split("@")[0] ??
-    "member";
-  const displayName = user?.fullName ?? user?.firstName ?? "Your profile";
+    emailHandle ??
+    displayName.toLowerCase().replace(/\s+/g, "");
   const imageUrl =
     user?.imageUrl ??
     `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(displayName)}`;
@@ -100,17 +112,30 @@ export default function ProfilePage() {
             </p>
           </GlassCard>
           <button
-            className="glass-card rounded-2xl p-4 border border-outline-variant/15 text-center active:scale-95 transition-all"
-            onClick={() => router.push("/create")}
+            className="glass-card rounded-2xl p-4 border border-outline-variant/15 text-center active:scale-95 transition-all disabled:opacity-50"
+            disabled={!canCreateEvents}
+            onClick={() => canCreateEvents && router.push("/create")}
             type="button"
           >
             <span className="material-symbols-outlined text-secondary mb-2">
               add_circle
             </span>
             <p className="text-xs font-label font-bold uppercase tracking-wider text-on-surface-variant">
-              Host Again
+              {canCreateEvents ? "Host Again" : "Host Locked"}
             </p>
           </button>
+          {access.isAdmin && (
+            <button
+              className="glass-card rounded-2xl p-4 border border-outline-variant/15 text-center active:scale-95 transition-all"
+              onClick={() => router.push("/admin/users")}
+              type="button"
+            >
+              <span className="material-symbols-outlined text-tertiary mb-2">admin_panel_settings</span>
+              <p className="text-xs font-label font-bold uppercase tracking-wider text-on-surface-variant">
+                Admin
+              </p>
+            </button>
+          )}
         </div>
 
         <h2 className="font-headline text-lg font-bold mb-3">Hosted Events</h2>

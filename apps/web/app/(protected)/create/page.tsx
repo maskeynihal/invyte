@@ -7,8 +7,15 @@ import { useRouter } from "next/navigation";
 import { VibeSelector } from "@invyte/ui/vibe-selector";
 import AppShell from "@/components/AppShell";
 import { vibeOptions } from "@/lib/mockData";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api, type Id } from "@invyte/convex";
+import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const categoryOptions = [
   "Party",
@@ -21,6 +28,90 @@ const categoryOptions = [
   "Art",
   "General",
 ];
+
+const hourOptions = Array.from({ length: 12 }, (_, index) => String(index + 1));
+const minuteOptions = [
+  "00",
+  "05",
+  "10",
+  "15",
+  "20",
+  "25",
+  "30",
+  "35",
+  "40",
+  "45",
+  "50",
+  "55",
+];
+
+function TimePickerPopover({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (nextValue: string) => void;
+}) {
+  const parsedTime = value.match(/(\d{1,2}):(\d{2})\s(AM|PM)/);
+  const hour = parsedTime?.[1] ?? "8";
+  const minute = parsedTime?.[2] ?? "00";
+  const period = parsedTime?.[3] ?? "PM";
+
+  const updateTime = (
+    nextHour: string,
+    nextMinute: string,
+    nextPeriod: string,
+  ) => {
+    onChange(`${nextHour}:${nextMinute} ${nextPeriod}`);
+  };
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          className="w-full bg-transparent border-none p-0 text-left text-on-surface focus:ring-0 focus:outline-none font-medium text-sm"
+          type="button"
+        >
+          {value || "Pick time"}
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-64">
+        <div className="grid grid-cols-3 gap-2">
+          <select
+            className="input-field !p-2 !rounded-xl !text-sm"
+            value={hour}
+            onChange={(event) => updateTime(event.target.value, minute, period)}
+          >
+            {hourOptions.map((hourValue) => (
+              <option key={hourValue} value={hourValue}>
+                {hourValue}
+              </option>
+            ))}
+          </select>
+          <select
+            className="input-field !p-2 !rounded-xl !text-sm"
+            value={minute}
+            onChange={(event) => updateTime(hour, event.target.value, period)}
+          >
+            {minuteOptions.map((minuteValue) => (
+              <option key={minuteValue} value={minuteValue}>
+                {minuteValue}
+              </option>
+            ))}
+          </select>
+          <select
+            className="input-field !p-2 !rounded-xl !text-sm"
+            value={period}
+            onChange={(event) => updateTime(hour, minute, event.target.value)}
+          >
+            <option value="AM">AM</option>
+            <option value="PM">PM</option>
+          </select>
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
 
 export default function CreateEventPage() {
   const router = useRouter();
@@ -40,10 +131,19 @@ export default function CreateEventPage() {
     isPublic: true,
     allowPlusOne: true,
   });
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
 
   const createEvent = useMutation(api.events.createEvent);
   const generateUploadUrl = useMutation(api.events.generateUploadUrl);
+  const access = useQuery(api.users.getCurrentUserAccess);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
+
+  const canCreateEvents = access?.effectiveFeatures.canEventCreation ?? false;
+  const canUploadImages = access?.effectiveFeatures.canImageUpdate ?? false;
+  const monthlyEventLimit = access?.effectiveFeatures.monthlyEventLimit ?? 0;
+  const monthlyEventsCreated = access?.usage.monthlyEventCreatedCount ?? 0;
+  const hasCreationCapacity = monthlyEventsCreated < monthlyEventLimit;
 
   const hostName =
     user?.fullName ??
@@ -57,9 +157,14 @@ export default function CreateEventPage() {
     `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(hostName)}`;
   const selectedVibeOption =
     vibeOptions.find((vibe) => vibe.id === selectedVibe) ?? vibeOptions[0];
-  const selectedCoverPreview = coverPreviewUrl ?? selectedVibeOption?.image ?? "";
+  const selectedCoverPreview =
+    coverPreviewUrl ?? selectedVibeOption?.image ?? "";
 
   const handleCoverSelection = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!canUploadImages) {
+      return;
+    }
+
     const file = event.target.files?.[0];
     if (!file) {
       return;
@@ -70,7 +175,7 @@ export default function CreateEventPage() {
   };
 
   const uploadSelectedCover = async () => {
-    if (!selectedCoverFile) {
+    if (!selectedCoverFile || !canUploadImages) {
       return undefined;
     }
 
@@ -87,7 +192,9 @@ export default function CreateEventPage() {
       throw new Error("Failed to upload cover image");
     }
 
-    const { storageId } = (await uploadResult.json()) as { storageId: Id<"_storage"> };
+    const { storageId } = (await uploadResult.json()) as {
+      storageId: Id<"_storage">;
+    };
     return storageId;
   };
 
@@ -96,7 +203,20 @@ export default function CreateEventPage() {
       return;
     }
 
+    if (!canCreateEvents) {
+      setSubmissionError("Event creation is disabled for your account.");
+      return;
+    }
+
+    if (!hasCreationCapacity) {
+      setSubmissionError(
+        `You reached your monthly limit (${monthlyEventLimit}). Contact an admin to upgrade your plan.`,
+      );
+      return;
+    }
+
     setIsSubmitting(true);
+    setSubmissionError(null);
 
     try {
       const coverImageStorageId = await uploadSelectedCover();
@@ -119,6 +239,11 @@ export default function CreateEventPage() {
       router.push(`/event/${eventId}`);
     } catch (error) {
       console.error("Failed to create event:", error);
+      setSubmissionError(
+        error instanceof Error
+          ? error.message
+          : "Failed to create event. Try again.",
+      );
       setIsSubmitting(false);
     }
   };
@@ -133,7 +258,13 @@ export default function CreateEventPage() {
           <p className="text-sm font-medium text-on-surface mt-1">{hostName}</p>
         </div>
         <div className="relative w-11 h-11 rounded-full overflow-hidden border border-primary/20 shadow-neon-purple">
-          <Image alt={hostName} className="object-cover" fill src={hostAvatar} unoptimized />
+          <Image
+            alt={hostName}
+            className="object-cover"
+            fill
+            src={hostAvatar}
+            unoptimized
+          />
         </div>
       </div>
 
@@ -150,6 +281,21 @@ export default function CreateEventPage() {
         ))}
       </div>
 
+      <div className="glass-card rounded-2xl p-4 mb-6">
+        <p className="text-[10px] font-label font-bold uppercase tracking-[0.2em] text-outline">
+          Plan Usage
+        </p>
+        <p className="text-sm text-on-surface mt-2">
+          Events this month: {monthlyEventsCreated} / {monthlyEventLimit}
+        </p>
+        {!canCreateEvents && (
+          <p className="text-xs text-red-300 mt-1">
+            Your account cannot create events. Ask an admin to enable this
+            feature.
+          </p>
+        )}
+      </div>
+
       {step === 1 && (
         <section className="space-y-8 animate-slide-up">
           <div className="space-y-2">
@@ -157,7 +303,8 @@ export default function CreateEventPage() {
               New Gathering
             </span>
             <h1 className="font-headline text-4xl font-black tracking-tight leading-none">
-              What&apos;s the <span className="text-primary">Vibe</span> Tonight?
+              What&apos;s the <span className="text-primary">Vibe</span>{" "}
+              Tonight?
             </h1>
           </div>
 
@@ -170,7 +317,10 @@ export default function CreateEventPage() {
                 type="text"
                 value={formData.title}
                 onChange={(event) =>
-                  setFormData((current) => ({ ...current, title: event.target.value }))
+                  setFormData((current) => ({
+                    ...current,
+                    title: event.target.value,
+                  }))
                 }
               />
             </div>
@@ -182,15 +332,32 @@ export default function CreateEventPage() {
                   <span className="material-symbols-outlined text-secondary text-sm">
                     calendar_today
                   </span>
-                  <input
-                    className="bg-transparent border-none p-0 text-on-surface focus:ring-0 focus:outline-none w-full font-medium text-sm"
-                    type="text"
-                    placeholder="Aug 24"
-                    value={formData.date}
-                    onChange={(event) =>
-                      setFormData((current) => ({ ...current, date: event.target.value }))
-                    }
-                  />
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button
+                        className="w-full bg-transparent border-none p-0 text-left text-on-surface focus:ring-0 focus:outline-none font-medium text-sm"
+                        type="button"
+                      >
+                        {formData.date || "Pick a date"}
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={selectedDate}
+                        onSelect={(nextDate) => {
+                          setSelectedDate(nextDate);
+                          setFormData((current) => ({
+                            ...current,
+                            date: nextDate
+                              ? format(nextDate, "MMM d, yyyy")
+                              : "",
+                          }));
+                        }}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
                 </div>
               </div>
               <div className="space-y-2">
@@ -199,13 +366,10 @@ export default function CreateEventPage() {
                   <span className="material-symbols-outlined text-secondary text-sm">
                     schedule
                   </span>
-                  <input
-                    className="bg-transparent border-none p-0 text-on-surface focus:ring-0 focus:outline-none w-full font-medium text-sm"
-                    type="text"
-                    placeholder="8:00 PM"
+                  <TimePickerPopover
                     value={formData.time}
-                    onChange={(event) =>
-                      setFormData((current) => ({ ...current, time: event.target.value }))
+                    onChange={(nextTime) =>
+                      setFormData((current) => ({ ...current, time: nextTime }))
                     }
                   />
                 </div>
@@ -224,7 +388,10 @@ export default function CreateEventPage() {
                   type="text"
                   value={formData.location}
                   onChange={(event) =>
-                    setFormData((current) => ({ ...current, location: event.target.value }))
+                    setFormData((current) => ({
+                      ...current,
+                      location: event.target.value,
+                    }))
                   }
                 />
               </div>
@@ -236,7 +403,10 @@ export default function CreateEventPage() {
                 className="input-field"
                 value={formData.category}
                 onChange={(event) =>
-                  setFormData((current) => ({ ...current, category: event.target.value }))
+                  setFormData((current) => ({
+                    ...current,
+                    category: event.target.value,
+                  }))
                 }
               >
                 {categoryOptions.map((category) => (
@@ -281,7 +451,10 @@ export default function CreateEventPage() {
                 placeholder="Tell people what to expect..."
                 value={formData.description}
                 onChange={(event) =>
-                  setFormData((current) => ({ ...current, description: event.target.value }))
+                  setFormData((current) => ({
+                    ...current,
+                    description: event.target.value,
+                  }))
                 }
               />
             </div>
@@ -291,6 +464,7 @@ export default function CreateEventPage() {
               <button
                 className="glass-card rounded-2xl border-2 border-dashed border-outline-variant/30 p-4 text-left hover:border-primary/50 transition-all w-full"
                 onClick={() => fileInputRef.current?.click()}
+                disabled={!canUploadImages}
                 type="button"
               >
                 <div className="relative h-48 rounded-2xl overflow-hidden mb-4">
@@ -303,10 +477,14 @@ export default function CreateEventPage() {
                   />
                 </div>
                 <p className="text-sm font-label font-bold text-on-surface">
-                  {selectedCoverFile ? selectedCoverFile.name : "Tap to upload a custom cover"}
+                  {selectedCoverFile
+                    ? selectedCoverFile.name
+                    : "Tap to upload a custom cover"}
                 </p>
                 <p className="text-xs text-on-surface-variant mt-1">
-                  If you skip upload, the selected vibe image will be used as the event cover.
+                  {canUploadImages
+                    ? "If you skip upload, the selected vibe image will be used as the event cover."
+                    : "Image upload is disabled for your account. The selected vibe image will be used."}
                 </p>
               </button>
               <input
@@ -336,10 +514,15 @@ export default function CreateEventPage() {
               </div>
               <button
                 onClick={() =>
-                  setFormData((current) => ({ ...current, isPublic: !current.isPublic }))
+                  setFormData((current) => ({
+                    ...current,
+                    isPublic: !current.isPublic,
+                  }))
                 }
                 className={`w-12 h-7 rounded-full transition-all duration-300 relative ${
-                  formData.isPublic ? "bg-primary" : "bg-surface-container-highest"
+                  formData.isPublic
+                    ? "bg-primary"
+                    : "bg-surface-container-highest"
                 }`}
                 type="button"
               >
@@ -353,7 +536,9 @@ export default function CreateEventPage() {
 
             <div className="glass-card rounded-2xl p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-secondary">group_add</span>
+                <span className="material-symbols-outlined text-secondary">
+                  group_add
+                </span>
                 <div>
                   <p className="font-label font-bold text-sm text-on-surface">
                     Allow +1
@@ -371,7 +556,9 @@ export default function CreateEventPage() {
                   }))
                 }
                 className={`w-12 h-7 rounded-full transition-all duration-300 relative ${
-                  formData.allowPlusOne ? "bg-secondary" : "bg-surface-container-highest"
+                  formData.allowPlusOne
+                    ? "bg-secondary"
+                    : "bg-surface-container-highest"
                 }`}
                 type="button"
               >
@@ -385,10 +572,18 @@ export default function CreateEventPage() {
           </div>
 
           <div className="flex gap-3 pt-4">
-            <button className="btn-secondary flex-1" onClick={() => setStep(1)} type="button">
+            <button
+              className="btn-secondary flex-1"
+              onClick={() => setStep(1)}
+              type="button"
+            >
               Back
             </button>
-            <button className="btn-primary flex-[2]" onClick={() => setStep(3)} type="button">
+            <button
+              className="btn-primary flex-[2]"
+              onClick={() => setStep(3)}
+              type="button"
+            >
               Next Step
             </button>
           </div>
@@ -447,25 +642,35 @@ export default function CreateEventPage() {
                 </div>
               </div>
               <p className="text-sm text-on-surface-variant leading-relaxed">
-                Launch now to generate the public RSVP page, attendee pass, planning board, and
-                gallery for this event.
+                Launch now to generate the public RSVP page, attendee pass,
+                planning board, and gallery for this event.
               </p>
             </div>
           </div>
 
           <div className="flex gap-3 pt-4">
-            <button className="btn-secondary flex-1" onClick={() => setStep(2)} type="button">
+            <button
+              className="btn-secondary flex-1"
+              onClick={() => setStep(2)}
+              type="button"
+            >
               Back
             </button>
             <button
               className="btn-primary flex-[2] disabled:opacity-50"
               onClick={handleLaunch}
-              disabled={isSubmitting}
+              disabled={
+                isSubmitting || !canCreateEvents || !hasCreationCapacity
+              }
               type="button"
             >
               {isSubmitting ? "Launching..." : "Launch Event"}
             </button>
           </div>
+
+          {submissionError && (
+            <p className="text-xs text-red-300 mt-2">{submissionError}</p>
+          )}
         </section>
       )}
     </AppShell>

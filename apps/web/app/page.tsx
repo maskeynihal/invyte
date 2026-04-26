@@ -120,7 +120,7 @@ export default function DiscoveryPage() {
                   attendeeCount={event.attendeeCount}
                   attendeeAvatars={event.attendees.map((attendee) => attendee.avatar)}
                   category={event.category}
-                  onClick={(id) => router.push(`/event/${id}`)}
+                  onClick={(id) => router.push(`/event/${id}/rsvp`)}
                 />
               </div>
             ))}
@@ -148,7 +148,7 @@ export default function DiscoveryPage() {
               <GlassCard
                 key={event._id}
                 className="p-4 cursor-pointer hover:border-primary/30 transition-all"
-                onClick={() => router.push(`/event/${event._id}`)}
+                onClick={() => router.push(`/event/${event._id}/rsvp`)}
               >
                 <div className="flex items-center justify-between gap-4">
                   <div>
@@ -189,7 +189,7 @@ export default function DiscoveryPage() {
                 attendeeCount={event.attendeeCount}
                 attendeeAvatars={event.attendees.map((attendee) => attendee.avatar)}
                 category={event.category}
-                onClick={(id) => router.push(`/event/${id}`)}
+                onClick={(id) => router.push(`/event/${id}/rsvp`)}
               />
             ))}
           </div>

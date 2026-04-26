@@ -1,12 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api, type Id } from "@invyte/convex";
+import { QRCodeCanvas } from "qrcode.react";
 
 export default function EntryPassPage() {
   const params = useParams<{ id: Id<"events">; attendeeId: Id<"attendees"> }>();
+  const router = useRouter();
   const pass = useQuery(api.events.getAttendeePass, {
     eventId: params.id,
     attendeeId: params.attendeeId,
@@ -34,13 +36,31 @@ export default function EntryPassPage() {
       : pass.attendee.rsvpStatus === "maybe"
         ? "Maybe"
         : "Not Going";
+  const passPath = `/event/${pass.event._id}/pass/${pass.attendee._id}`;
+  const passUrl =
+    typeof window === "undefined"
+      ? passPath
+      : `${window.location.origin}${passPath}`;
+  const signedEventPath = `/event/${pass.event._id}/details?access=${encodeURIComponent(
+    pass.eventAccessToken,
+  )}`;
+  const qrPayload = JSON.stringify({
+    url: passUrl,
+    code: pass.qrValue,
+  });
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-6">
       <div className="w-full max-w-sm animate-fade-in">
         <div className="glass-card rounded-3xl border border-primary/20 overflow-hidden shadow-glow-purple">
           <div className="relative h-40 overflow-hidden">
-            <Image alt={pass.event.title} className="object-cover" fill src={pass.event.coverImage} unoptimized />
+            <Image
+              alt={pass.event.title}
+              className="object-cover"
+              fill
+              src={pass.event.coverImage}
+              unoptimized
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-[rgba(37,37,44,0.6)] to-transparent" />
             <div className="absolute top-4 left-4">
               <span className="font-headline font-black tracking-tighter uppercase text-xl italic gradient-text">
@@ -89,7 +109,13 @@ export default function EntryPassPage() {
             </div>
             <div className="flex items-center gap-3">
               <div className="relative w-10 h-10 rounded-full overflow-hidden">
-                <Image alt={pass.attendee.name} className="object-cover" fill src={pass.attendee.avatar} unoptimized />
+                <Image
+                  alt={pass.attendee.name}
+                  className="object-cover"
+                  fill
+                  src={pass.attendee.avatar}
+                  unoptimized
+                />
               </div>
               <div>
                 <p className="font-medium text-sm">{pass.attendee.name}</p>
@@ -102,22 +128,34 @@ export default function EntryPassPage() {
             </div>
             <div className="flex justify-center py-4">
               <div className="w-40 h-40 rounded-2xl bg-white flex items-center justify-center">
-                <div className="space-y-1 text-center px-4">
-                  <span className="material-symbols-outlined text-4xl text-black/80">qr_code_2</span>
-                  <p className="text-[9px] font-bold uppercase tracking-widest text-black/40">
-                    {pass.qrValue}
-                  </p>
-                </div>
+                <QRCodeCanvas
+                  value={qrPayload}
+                  size={124}
+                  level="M"
+                  includeMargin
+                  bgColor="#FFFFFF"
+                  fgColor="#111111"
+                />
               </div>
             </div>
             <div className="text-sm text-on-surface-variant">
-              Host: <span className="text-on-surface font-medium">{pass.event.hostName}</span>
+              Host:{" "}
+              <span className="text-on-surface font-medium">
+                {pass.event.hostName}
+              </span>
             </div>
           </div>
         </div>
         <p className="text-center text-[10px] text-outline uppercase tracking-widest mt-6">
           Show this pass at the door
         </p>
+        <button
+          className="btn-secondary w-full mt-4"
+          onClick={() => router.push(signedEventPath)}
+          type="button"
+        >
+          Go To Event Details
+        </button>
       </div>
     </div>
   );
