@@ -1,12 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { GlassCard } from "@invyte/ui/glass-card";
 import AppShell from "@/components/AppShell";
-import { useConvexAuth, useQuery } from "convex/react";
+import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { api } from "@invyte/convex";
+import { toast } from "@/components/Toaster";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -14,12 +16,19 @@ export default function ProfilePage() {
   const { isLoaded: isUserLoaded, user } = useUser();
   const profile = useQuery(api.events.getProfileData, isAuthenticated ? {} : "skip");
   const access = useQuery(api.users.getCurrentUserAccess, isAuthenticated ? {} : "skip");
+  const currentUser = useQuery(api.users.currentUser, isAuthenticated ? {} : "skip");
+  const updateDisplayName = useMutation(api.users.updateDisplayName);
+
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [nameInput, setNameInput] = useState("");
+  const [isSavingName, setIsSavingName] = useState(false);
 
   if (
     isLoading ||
     !isUserLoaded ||
     (isAuthenticated && profile === undefined) ||
-    (isAuthenticated && access === undefined)
+    (isAuthenticated && access === undefined) ||
+    (isAuthenticated && currentUser === undefined)
   ) {
     return (
       <AppShell>
@@ -34,11 +43,7 @@ export default function ProfilePage() {
     return null;
   }
 
-  if (profile === undefined) {
-    return null;
-  }
-
-  if (access === undefined || access === null) {
+  if (profile === undefined || access === undefined || access === null) {
     return null;
   }
 
@@ -47,7 +52,12 @@ export default function ProfilePage() {
 
   const email = user?.primaryEmailAddress?.emailAddress ?? "Signed in with Clerk";
   const emailHandle = user?.primaryEmailAddress?.emailAddress?.split("@")[0];
-  const displayName = user?.fullName ?? user?.firstName ?? "Your profile";
+  // Prefer the Convex stored name (which the user can customise) over the Clerk name.
+  const displayName =
+    currentUser?.name ??
+    user?.fullName ??
+    user?.firstName ??
+    "Your profile";
   const handle =
     user?.username ??
     emailHandle ??
@@ -56,6 +66,24 @@ export default function ProfilePage() {
     user?.imageUrl ??
     `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(displayName)}`;
 
+  const handleSaveName = async () => {
+    const trimmed = nameInput.trim();
+    if (!trimmed || isSavingName) return;
+    setIsSavingName(true);
+    try {
+      await updateDisplayName({ name: trimmed });
+      toast("Display name updated");
+      setIsEditingName(false);
+    } catch (err) {
+      toast(
+        err instanceof Error ? err.message : "Failed to update name",
+        "error",
+      );
+    } finally {
+      setIsSavingName(false);
+    }
+  };
+
   return (
     <AppShell>
       <section className="animate-fade-in">
@@ -63,7 +91,58 @@ export default function ProfilePage() {
           <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-primary/30 shadow-neon-purple mb-4">
             <Image alt={displayName} className="object-cover" fill src={imageUrl} unoptimized />
           </div>
-          <h1 className="font-headline text-2xl font-black">{displayName}</h1>
+
+          {isEditingName ? (
+            <div className="flex items-center gap-2 mt-1 w-full max-w-xs">
+              <input
+                autoFocus
+                className="input-field flex-1 text-center text-sm"
+                maxLength={50}
+                placeholder="Your display name"
+                value={nameInput}
+                onChange={(e) => setNameInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") void handleSaveName();
+                  if (e.key === "Escape") setIsEditingName(false);
+                }}
+              />
+              <button
+                className="w-9 h-9 rounded-full bg-primary/20 text-primary flex items-center justify-center disabled:opacity-50 flex-shrink-0"
+                disabled={!nameInput.trim() || isSavingName}
+                onClick={handleSaveName}
+                type="button"
+              >
+                {isSavingName ? (
+                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <span className="material-symbols-outlined text-sm">check</span>
+                )}
+              </button>
+              <button
+                className="w-9 h-9 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center flex-shrink-0"
+                onClick={() => setIsEditingName(false)}
+                type="button"
+              >
+                <span className="material-symbols-outlined text-sm">close</span>
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 mt-1">
+              <h1 className="font-headline text-2xl font-black">{displayName}</h1>
+              <button
+                className="text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity"
+                onClick={() => {
+                  setNameInput(displayName);
+                  setIsEditingName(true);
+                }}
+                title="Edit display name"
+                type="button"
+              >
+                <span className="material-symbols-outlined text-base">edit</span>
+              </button>
+            </div>
+          )}
+
           <p className="text-sm text-on-surface-variant mt-1">@{handle}</p>
           <p className="text-xs text-outline mt-1">{email}</p>
 

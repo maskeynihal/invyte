@@ -152,6 +152,7 @@ export default defineSchema({
     avatar: v.optional(v.string()),
     tokenIdentifier: v.string(), // Clerk's user ID
     isAnonymous: v.optional(v.boolean()),
+    hasCustomName: v.optional(v.boolean()),
   })
     .index("by_token", ["tokenIdentifier"])
     .index("by_email", ["email"]),

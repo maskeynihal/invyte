@@ -6,6 +6,7 @@ import { GlassCard } from "@invyte/ui/glass-card";
 import AppShell from "@/components/AppShell";
 import { useMutation, useQuery } from "convex/react";
 import { api, type Id } from "@invyte/convex";
+import { toast } from "@/components/Toaster";
 
 const tabs = [
   { id: "tasks", label: "Tasks", icon: "checklist" },
@@ -83,6 +84,7 @@ export default function EventPlanScreen({
   const [editingBringItemId, setEditingBringItemId] =
     useState<Id<"bringItems"> | null>(null);
   const [bringEditForm, setBringEditForm] = useState({ label: "", notes: "" });
+  const [claimingIds, setClaimingIds] = useState<Set<string>>(new Set());
   const [timelineForm, setTimelineForm] = useState({
     timeLabel: "",
     title: "",
@@ -557,13 +559,18 @@ export default function EventPlanScreen({
                 if (!bringForm.label.trim()) {
                   return;
                 }
-                await addBringItem({
-                  eventId,
-                  label: bringForm.label.trim(),
-                  notes: bringForm.notes.trim() || undefined,
-                  accessToken: accessToken ?? undefined,
-                });
-                setBringForm({ label: "", notes: "" });
+                try {
+                  await addBringItem({
+                    eventId,
+                    label: bringForm.label.trim(),
+                    notes: bringForm.notes.trim() || undefined,
+                    accessToken: accessToken ?? undefined,
+                  });
+                  setBringForm({ label: "", notes: "" });
+                  toast("Item added");
+                } catch {
+                  toast("Failed to add item", "error");
+                }
               }}
               type="button"
             >
@@ -576,129 +583,188 @@ export default function EventPlanScreen({
               Add a shared bring list for this event.
             </p>
           ) : (
-            resolvedBringItems.map((item) => (
-              <GlassCard
-                key={item._id}
-                className="p-4 flex items-center justify-between gap-4"
-              >
-                <div className="flex-1">
-                  {editingBringItemId === item._id ? (
-                    <div className="space-y-2">
-                      <input
-                        className="input-field"
-                        value={bringEditForm.label}
-                        onChange={(event) =>
-                          setBringEditForm((current) => ({
-                            ...current,
-                            label: event.target.value,
-                          }))
-                        }
-                      />
-                      <input
-                        className="input-field"
-                        placeholder="Notes (optional)"
-                        value={bringEditForm.notes}
-                        onChange={(event) =>
-                          setBringEditForm((current) => ({
-                            ...current,
-                            notes: event.target.value,
-                          }))
-                        }
-                      />
-                      <div className="flex items-center gap-2">
-                        <button
-                          className="btn-secondary"
-                          onClick={async () => {
-                            if (!bringEditForm.label.trim()) {
-                              return;
-                            }
-                            await updateBringItem({
+            resolvedBringItems.map((item) => {
+              const isClaiming = claimingIds.has(item._id);
+
+              const handleClaimToggle = async () => {
+                if (isClaiming) return;
+                setClaimingIds((prev) => new Set(prev).add(item._id));
+                try {
+                  const result = await toggleBringItemClaim({
+                    id: item._id,
+                    accessToken: accessToken ?? undefined,
+                  });
+                  toast(result.claimed ? "Claimed!" : "Unclaimed");
+                } catch (err) {
+                  const message =
+                    err instanceof Error ? err.message : "Action failed";
+                  toast(
+                    message === "This item is already claimed"
+                      ? "Already claimed by someone else"
+                      : message,
+                    "error",
+                  );
+                } finally {
+                  setClaimingIds((prev) => {
+                    const next = new Set(prev);
+                    next.delete(item._id);
+                    return next;
+                  });
+                }
+              };
+
+              return (
+                <GlassCard
+                  key={item._id}
+                  className="p-4 flex items-center justify-between gap-4"
+                >
+                  <div className="flex-1">
+                    {editingBringItemId === item._id ? (
+                      <div className="space-y-2">
+                        <input
+                          className="input-field"
+                          value={bringEditForm.label}
+                          onChange={(event) =>
+                            setBringEditForm((current) => ({
+                              ...current,
+                              label: event.target.value,
+                            }))
+                          }
+                        />
+                        <input
+                          className="input-field"
+                          placeholder="Notes (optional)"
+                          value={bringEditForm.notes}
+                          onChange={(event) =>
+                            setBringEditForm((current) => ({
+                              ...current,
+                              notes: event.target.value,
+                            }))
+                          }
+                        />
+                        <div className="flex items-center gap-2">
+                          <button
+                            className="btn-secondary"
+                            onClick={async () => {
+                              if (!bringEditForm.label.trim()) {
+                                return;
+                              }
+                              try {
+                                await updateBringItem({
+                                  id: item._id,
+                                  label: bringEditForm.label.trim(),
+                                  notes:
+                                    bringEditForm.notes.trim() || undefined,
+                                  accessToken: accessToken ?? undefined,
+                                });
+                                setEditingBringItemId(null);
+                                toast("Item updated");
+                              } catch {
+                                toast("Failed to update item", "error");
+                              }
+                            }}
+                            type="button"
+                          >
+                            Save
+                          </button>
+                          <button
+                            className="btn-secondary"
+                            onClick={() => setEditingBringItemId(null)}
+                            type="button"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="text-sm font-medium">{item.label}</p>
+                        {item.notes && (
+                          <p className="text-xs text-on-surface-variant mt-1">
+                            {item.notes}
+                          </p>
+                        )}
+                        {item.claimedByName && (
+                          <p
+                            className={`text-[10px] mt-2 uppercase tracking-wider font-bold ${
+                              item.isClaimedByViewer
+                                ? "text-secondary"
+                                : "text-primary"
+                            }`}
+                          >
+                            {item.isClaimedByViewer
+                              ? "You're bringing this"
+                              : `Claimed by ${item.claimedByName}`}
+                          </p>
+                        )}
+                        {item.createdByName && (
+                          <p className="text-[10px] text-on-surface-variant mt-1 uppercase tracking-wider font-bold">
+                            Added by {item.createdByName}
+                          </p>
+                        )}
+                      </>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {item.isClaimed && !item.isClaimedByViewer ? (
+                      <span className="text-[10px] font-label font-bold uppercase tracking-wider text-on-surface-variant bg-surface-container px-3 py-1 rounded-full border border-outline-variant/20">
+                        Taken
+                      </span>
+                    ) : (
+                      <button
+                        className={`text-[10px] font-label font-bold uppercase tracking-wider px-3 py-1 rounded-full border active:scale-95 transition-all flex items-center gap-1.5 disabled:opacity-50 ${
+                          item.isClaimedByViewer
+                            ? "text-error bg-error/10 border-error/20"
+                            : "text-secondary bg-secondary/10 border-secondary/20"
+                        }`}
+                        disabled={isClaiming}
+                        onClick={handleClaimToggle}
+                        type="button"
+                      >
+                        {isClaiming && (
+                          <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                        )}
+                        {item.isClaimedByViewer ? "Unclaim" : "Claim"}
+                      </button>
+                    )}
+                    {item.canEdit && editingBringItemId !== item._id && (
+                      <button
+                        className="text-xs text-secondary uppercase tracking-wider font-bold"
+                        onClick={() => {
+                          setEditingBringItemId(item._id);
+                          setBringEditForm({
+                            label: item.label,
+                            notes: item.notes ?? "",
+                          });
+                        }}
+                        type="button"
+                      >
+                        Edit
+                      </button>
+                    )}
+                    {item.canEdit && (
+                      <button
+                        className="text-xs text-error uppercase tracking-wider font-bold"
+                        onClick={async () => {
+                          try {
+                            await deleteBringItem({
                               id: item._id,
-                              label: bringEditForm.label.trim(),
-                              notes: bringEditForm.notes.trim() || undefined,
                               accessToken: accessToken ?? undefined,
                             });
-                            setEditingBringItemId(null);
-                          }}
-                          type="button"
-                        >
-                          Save
-                        </button>
-                        <button
-                          className="btn-secondary"
-                          onClick={() => setEditingBringItemId(null)}
-                          type="button"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <>
-                      <p className="text-sm font-medium">{item.label}</p>
-                      {item.notes && (
-                        <p className="text-xs text-on-surface-variant mt-1">
-                          {item.notes}
-                        </p>
-                      )}
-                      {item.claimedByName && (
-                        <p className="text-[10px] text-primary mt-2 uppercase tracking-wider font-bold">
-                          Claimed by {item.claimedByName}
-                        </p>
-                      )}
-                      {item.createdByName && (
-                        <p className="text-[10px] text-on-surface-variant mt-1 uppercase tracking-wider font-bold">
-                          Added by {item.createdByName}
-                        </p>
-                      )}
-                    </>
-                  )}
-                </div>
-                <div className="flex items-center gap-3">
-                  <button
-                    className="text-[10px] font-label font-bold uppercase tracking-wider text-secondary bg-secondary/10 px-3 py-1 rounded-full border border-secondary/20 active:scale-95 transition-all"
-                    onClick={() =>
-                      toggleBringItemClaim({
-                        id: item._id,
-                        accessToken: accessToken ?? undefined,
-                      })
-                    }
-                    type="button"
-                  >
-                    {item.claimedByTokenIdentifier ? "Unclaim / Take" : "Claim"}
-                  </button>
-                  {item.canEdit && editingBringItemId !== item._id && (
-                    <button
-                      className="text-xs text-secondary uppercase tracking-wider font-bold"
-                      onClick={() => {
-                        setEditingBringItemId(item._id);
-                        setBringEditForm({
-                          label: item.label,
-                          notes: item.notes ?? "",
-                        });
-                      }}
-                      type="button"
-                    >
-                      Edit
-                    </button>
-                  )}
-                  {item.canEdit && (
-                    <button
-                      className="text-xs text-error uppercase tracking-wider font-bold"
-                      onClick={() =>
-                        deleteBringItem({
-                          id: item._id,
-                          accessToken: accessToken ?? undefined,
-                        })
-                      }
-                      type="button"
-                    >
-                      Remove
-                    </button>
-                  )}
-                </div>
-              </GlassCard>
-            ))
+                            toast("Item removed");
+                          } catch {
+                            toast("Failed to remove item", "error");
+                          }
+                        }}
+                        type="button"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                </GlassCard>
+              );
+            })
           )}
         </div>
       )}
