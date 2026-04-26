@@ -9,6 +9,7 @@ import { GlassCard } from "@invyte/ui/glass-card";
 import AppShell from "@/components/AppShell";
 import { useMutation, useQuery } from "convex/react";
 import { api, type Id } from "@invyte/convex";
+import { toast } from "@/components/Toaster";
 
 type RsvpStatus = "going" | "maybe" | "not-going" | null;
 
@@ -39,6 +40,8 @@ export default function EventDetailScreen({
   const [isSavingRsvp, setIsSavingRsvp] = useState(false);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [isLiking, setIsLiking] = useState(false);
+  const [isChangingRsvp, setIsChangingRsvp] = useState(false);
+  const [isPublicSaving, setIsPublicSaving] = useState(false);
   const [photoError, setPhotoError] = useState<string | null>(null);
   const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
 
@@ -137,9 +140,7 @@ export default function EventDetailScreen({
   };
 
   const handleSaveRsvp = async () => {
-    if (!event || !memberRsvpStatus || isSavingRsvp) {
-      return;
-    }
+    if (!event || !memberRsvpStatus || isSavingRsvp) return;
 
     setIsSavingRsvp(true);
     try {
@@ -157,39 +158,48 @@ export default function EventDetailScreen({
             : undefined,
       });
 
+      setIsChangingRsvp(false);
+
       if (memberRsvpStatus === "going") {
         const search = response.accessToken
           ? `?access=${encodeURIComponent(response.accessToken)}`
           : "";
         router.push(`/event/${eventId}/pass/${response.attendeeId}${search}`);
       }
+    } catch (err) {
+      toast(err instanceof Error ? err.message : "Failed to save RSVP", "error");
     } finally {
       setIsSavingRsvp(false);
     }
   };
 
   const handlePublicRsvpSelect = async (status: RsvpStatus) => {
-    if (!status) {
-      return;
-    }
+    if (!status || isPublicSaving) return;
 
-    const response =
-      publicAccess && accessToken
-        ? await updateAccessTokenRsvp({
-            eventId,
-            accessToken,
-            rsvpStatus: status,
-          })
-        : await upsertMemberRsvp({
-            eventId,
-            rsvpStatus: status,
-          });
+    setIsPublicSaving(true);
+    try {
+      const response =
+        publicAccess && accessToken
+          ? await updateAccessTokenRsvp({
+              eventId,
+              accessToken,
+              rsvpStatus: status,
+            })
+          : await upsertMemberRsvp({
+              eventId,
+              rsvpStatus: status,
+            });
 
-    if (status === "going") {
-      const search = response.accessToken
-        ? `?access=${encodeURIComponent(response.accessToken)}`
-        : "";
-      router.push(`/event/${eventId}/pass/${response.attendeeId}${search}`);
+      if (status === "going") {
+        const search = response.accessToken
+          ? `?access=${encodeURIComponent(response.accessToken)}`
+          : "";
+        router.push(`/event/${eventId}/pass/${response.attendeeId}${search}`);
+      }
+    } catch (err) {
+      toast(err instanceof Error ? err.message : "Failed to save RSVP", "error");
+    } finally {
+      setIsPublicSaving(false);
     }
   };
 
@@ -547,7 +557,7 @@ export default function EventDetailScreen({
       <section className="mb-6 animate-slide-up">
         <div className="flex items-center justify-between mb-3">
           <label className="label-text block">
-            {event.isHost ? "Host Status" : "Your RSVP"}
+            {event.isHost ? "Host Status" : "Are you coming?"}
           </label>
           {event.currentUserRsvp?.rsvpStatus === "going" && (
             <button
@@ -577,20 +587,81 @@ export default function EventDetailScreen({
             </p>
           </GlassCard>
         ) : publicAccess ? (
-          <>
-            <RsvpButton
-              status={event.currentUserRsvp?.rsvpStatus ?? null}
-              onSelect={handlePublicRsvpSelect}
-            />
-            <p className="text-xs text-on-surface-variant mt-3">
-              You can update your RSVP status any time.
+          <div className="space-y-3">
+            {event.currentUserRsvp?.rsvpStatus && !isPublicSaving && (
+              <GlassCard className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] font-label font-bold uppercase tracking-wider text-outline mb-1">
+                      Your Response
+                    </p>
+                    <p className="font-label font-bold text-sm text-on-surface">
+                      {event.currentUserRsvp.rsvpStatus === "going" && "You're going! 🎉"}
+                      {event.currentUserRsvp.rsvpStatus === "maybe" && "You said maybe 🤔"}
+                      {event.currentUserRsvp.rsvpStatus === "not-going" && "You can't make it 😢"}
+                    </p>
+                  </div>
+                  <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>
+                    check_circle
+                  </span>
+                </div>
+              </GlassCard>
+            )}
+            <p className="text-xs text-on-surface-variant">
+              {event.currentUserRsvp?.rsvpStatus
+                ? "Want to change your mind? Tap a response below."
+                : "Let the host know if you're coming — tap a response."}
             </p>
-          </>
+            {isPublicSaving ? (
+              <div className="flex justify-center py-5">
+                <div className="w-6 h-6 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+              </div>
+            ) : (
+              <RsvpButton
+                disabled={isPublicSaving}
+                status={event.currentUserRsvp?.rsvpStatus ?? null}
+                onSelect={handlePublicRsvpSelect}
+              />
+            )}
+          </div>
         ) : (
           <div className="space-y-4">
-            <RsvpButton status={memberRsvpStatus} onSelect={handleRsvpSelect} />
+            {event.currentUserRsvp && !isChangingRsvp ? (
+              <GlassCard className="p-4">
+                <p className="text-[10px] font-label font-bold uppercase tracking-wider text-outline mb-2">
+                  Your Response
+                </p>
+                <div className="flex items-center justify-between">
+                  <p className="font-label font-bold text-base text-on-surface">
+                    {memberRsvpStatus === "going" && "You're going! 🎉"}
+                    {memberRsvpStatus === "maybe" && "You said maybe 🤔"}
+                    {memberRsvpStatus === "not-going" && "You can't make it 😢"}
+                  </p>
+                  <button
+                    className="text-xs font-label font-bold text-on-surface-variant uppercase tracking-wider underline underline-offset-2"
+                    onClick={() => setIsChangingRsvp(true)}
+                    type="button"
+                  >
+                    Change
+                  </button>
+                </div>
+              </GlassCard>
+            ) : (
+              <>
+                <p className="text-xs text-on-surface-variant">
+                  {event.currentUserRsvp
+                    ? "Update your response — tap a new option."
+                    : "Let the host know if you'll be there."}
+                </p>
+                <RsvpButton
+                  disabled={isSavingRsvp}
+                  status={memberRsvpStatus}
+                  onSelect={handleRsvpSelect}
+                />
+              </>
+            )}
 
-            {memberRsvpStatus && (
+            {memberRsvpStatus && (!event.currentUserRsvp || isChangingRsvp) && (
               <GlassCard className="p-4 space-y-4 animate-slide-up">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-2">
@@ -700,14 +771,29 @@ export default function EventDetailScreen({
                   {isSavingRsvp && (
                     <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                   )}
-                  {isSavingRsvp ? "Saving RSVP..." : "Save RSVP"}
+                  {isSavingRsvp
+                    ? "Saving..."
+                    : memberRsvpStatus === "going"
+                      ? "Confirm — I'm Going!"
+                      : memberRsvpStatus === "maybe"
+                        ? "Save Response"
+                        : "Save Response"}
                 </button>
+
+                {isChangingRsvp && (
+                  <button
+                    className="w-full text-xs font-label font-bold text-on-surface-variant uppercase tracking-wider py-2"
+                    onClick={() => {
+                      setIsChangingRsvp(false);
+                      setMemberRsvpStatus(event.currentUserRsvp?.rsvpStatus ?? null);
+                    }}
+                    type="button"
+                  >
+                    Cancel
+                  </button>
+                )}
               </GlassCard>
             )}
-
-            <p className="text-xs text-on-surface-variant">
-              You can review and update your RSVP details any time.
-            </p>
           </div>
         )}
       </section>

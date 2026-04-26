@@ -12,7 +12,7 @@ const tabs = [
   { id: "tasks", label: "Tasks", icon: "checklist" },
   { id: "budget", label: "Budget", icon: "payments" },
   { id: "bring", label: "Bring List", icon: "shopping_bag" },
-  { id: "timeline", label: "Timeline", icon: "timeline" },
+  { id: "timeline", label: "Itinerary", icon: "event_note" },
 ] as const;
 
 type EventPlanScreenProps = {
@@ -826,14 +826,14 @@ export default function EventPlanScreen({
                 }}
                 type="button"
               >
-                Add Timeline Item
+                Add Itinerary Item
               </button>
             </GlassCard>
           )}
 
           {resolvedTimelineItems.length === 0 ? (
             <p className="text-sm text-on-surface-variant text-center py-8">
-              Build the event run-of-show here.
+              Add your event schedule here.
             </p>
           ) : (
             resolvedTimelineItems.map((item) => (
