@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import localFont from "next/font/local";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
+import { Toaster } from "@/components/Toaster";
 import PWARegister from "./PWARegister";
 import "./globals.css";
 
@@ -82,7 +83,10 @@ export default function RootLayout({
       >
         <ClerkProvider>
           <PWARegister />
-          <ConvexClientProvider>{children}</ConvexClientProvider>
+          <ConvexClientProvider>
+            {children}
+            <Toaster />
+          </ConvexClientProvider>
         </ClerkProvider>
       </body>
     </html>

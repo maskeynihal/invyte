@@ -220,7 +220,11 @@ export const storeUser = mutation({
 
     if (user) {
       const updates = omitUndefined({
-        name: user.name !== resolvedName ? resolvedName : undefined,
+        // Respect a custom display name the user set; only sync Clerk name otherwise.
+        name:
+          !user.hasCustomName && user.name !== resolvedName
+            ? resolvedName
+            : undefined,
         email:
           normalizeEmail(user.email) !== normalizedIdentityEmail
             ? normalizedIdentityEmail
@@ -599,5 +603,37 @@ export const backfillUsersAccessDefaults = mutation({
     }
 
     return { updated };
+  },
+});
+
+export const updateDisplayName = mutation({
+  args: { name: v.string() },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    const trimmed = args.name.trim();
+    if (!trimmed) {
+      throw new Error("Display name cannot be empty");
+    }
+    if (trimmed.length > 50) {
+      throw new Error("Display name must be 50 characters or fewer");
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier),
+      )
+      .unique();
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    await ctx.db.patch(user._id, { name: trimmed, hasCustomName: true });
+    return trimmed;
   },
 });

@@ -1694,6 +1694,10 @@ export const getBringItems = query({
           actor.isHost ||
           (Boolean(actor.tokenIdentifier) &&
             item.createdByTokenIdentifier === actor.tokenIdentifier),
+        isClaimed: Boolean(item.claimedByTokenIdentifier),
+        isClaimedByViewer:
+          Boolean(actor.tokenIdentifier) &&
+          item.claimedByTokenIdentifier === actor.tokenIdentifier,
         claimedByName: item.claimedByName
           ? await resolveStoredDisplayNameWithUserLookup(
               ctx,
