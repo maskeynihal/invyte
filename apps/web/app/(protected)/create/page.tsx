@@ -657,13 +657,16 @@ export default function CreateEventPage() {
               Back
             </button>
             <button
-              className="btn-primary flex-[2] disabled:opacity-50"
+              className="btn-primary flex-[2] disabled:opacity-50 flex items-center justify-center gap-2"
               onClick={handleLaunch}
               disabled={
                 isSubmitting || !canCreateEvents || !hasCreationCapacity
               }
               type="button"
             >
+              {isSubmitting && (
+                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+              )}
               {isSubmitting ? "Launching..." : "Launch Event"}
             </button>
           </div>

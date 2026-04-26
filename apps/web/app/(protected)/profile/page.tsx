@@ -121,7 +121,11 @@ export default function ProfilePage() {
               add_circle
             </span>
             <p className="text-xs font-label font-bold uppercase tracking-wider text-on-surface-variant">
-              {canCreateEvents ? "Host Again" : "Host Locked"}
+              {!canCreateEvents
+                ? "Host Locked"
+                : memberProfile.stats.hostedCount > 0
+                  ? "Host Again"
+                  : "Host a Party"}
             </p>
           </button>
           {access.isAdmin && (
@@ -141,9 +145,22 @@ export default function ProfilePage() {
         <h2 className="font-headline text-lg font-bold mb-3">Hosted Events</h2>
         <div className="space-y-3 mb-6">
           {memberProfile.hostedEvents.length === 0 ? (
-            <p className="text-sm text-on-surface-variant italic">
-              You haven&apos;t hosted an event yet.
-            </p>
+            <GlassCard className="p-6 flex flex-col items-center text-center gap-3">
+              <span className="material-symbols-outlined text-primary text-3xl">celebration</span>
+              <div>
+                <p className="font-label font-bold text-sm text-on-surface">Host your first party</p>
+                <p className="text-xs text-on-surface-variant mt-1">Create an event and invite your people.</p>
+              </div>
+              {canCreateEvents && (
+                <button
+                  className="btn-primary text-xs py-2 px-5"
+                  onClick={() => router.push("/create")}
+                  type="button"
+                >
+                  Create Event
+                </button>
+              )}
+            </GlassCard>
           ) : (
             memberProfile.hostedEvents.map((event) => (
               <GlassCard

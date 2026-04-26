@@ -31,14 +31,17 @@ export default function GuestRsvpPage() {
     }));
   }, [user]);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const event = useQuery(api.events.getEventRsvpDetails, { id: params.id });
   const submitGuestRsvp = useMutation(api.events.submitGuestRsvp);
 
   const handleSubmit = async () => {
-    if (!rsvp || !formData.name.trim() || !formData.email.trim() || !event) {
+    if (!rsvp || !formData.name.trim() || !formData.email.trim() || !event || isSubmitting) {
       return;
     }
 
+    setIsSubmitting(true);
+    try {
     const response = await submitGuestRsvp({
       eventId: event._id,
       name: formData.name.trim(),
@@ -55,6 +58,9 @@ export default function GuestRsvpPage() {
     router.push(
       `/event/${event._id}/pass/${response.attendeeId}?access=${encodeURIComponent(response.accessToken)}`,
     );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (event === undefined) {
@@ -318,12 +324,15 @@ export default function GuestRsvpPage() {
             )}
 
             <button
-              className="btn-primary mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-primary mt-4 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               onClick={handleSubmit}
-              disabled={!formData.name.trim() || !formData.email.trim()}
+              disabled={!formData.name.trim() || !formData.email.trim() || isSubmitting}
               type="button"
             >
-              Confirm RSVP
+              {isSubmitting && (
+                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+              )}
+              {isSubmitting ? "Confirming..." : "Confirm RSVP"}
             </button>
           </div>
         )}

@@ -38,6 +38,7 @@ export default function EventDetailScreen({
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [isSavingRsvp, setIsSavingRsvp] = useState(false);
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [isLiking, setIsLiking] = useState(false);
   const [photoError, setPhotoError] = useState<string | null>(null);
   const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
 
@@ -193,14 +194,19 @@ export default function EventDetailScreen({
   };
 
   const handleLikeToggle = async () => {
-    if (!event?.viewerCanInteract) {
+    if (!event?.viewerCanInteract || isLiking) {
       return;
     }
 
-    await toggleEventLikeMutation({
-      eventId,
-      accessToken: accessToken ?? undefined,
-    });
+    setIsLiking(true);
+    try {
+      await toggleEventLikeMutation({
+        eventId,
+        accessToken: accessToken ?? undefined,
+      });
+    } finally {
+      setIsLiking(false);
+    }
   };
 
   const showCopyFeedback = (message: string) => {
@@ -495,15 +501,18 @@ export default function EventDetailScreen({
             </h2>
           </div>
           <button
-            className={`px-4 py-2 rounded-full border font-label font-bold uppercase text-xs tracking-wider transition-all ${
+            className={`px-4 py-2 rounded-full border font-label font-bold uppercase text-xs tracking-wider transition-all flex items-center gap-1.5 ${
               event.viewerHasLiked
                 ? "bg-primary/20 text-primary border-primary/30"
                 : "border-outline-variant/20 text-on-surface-variant"
-            } ${event.viewerCanInteract ? "" : "opacity-60"}`}
-            disabled={!event.viewerCanInteract}
+            } ${event.viewerCanInteract && !isLiking ? "" : "opacity-60"}`}
+            disabled={!event.viewerCanInteract || isLiking}
             onClick={handleLikeToggle}
             type="button"
           >
+            {isLiking && (
+              <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
+            )}
             {event.viewerHasLiked ? "Liked" : "Like"} · {event.likeCount}
           </button>
         </div>
@@ -683,12 +692,15 @@ export default function EventDetailScreen({
                 )}
 
                 <button
-                  className="btn-primary w-full disabled:opacity-50"
+                  className="btn-primary w-full disabled:opacity-50 flex items-center justify-center gap-2"
                   disabled={isSavingRsvp}
                   onClick={handleSaveRsvp}
                   type="button"
                 >
-                  {isSavingRsvp ? "Saving RSVP" : "Save RSVP"}
+                  {isSavingRsvp && (
+                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  )}
+                  {isSavingRsvp ? "Saving RSVP..." : "Save RSVP"}
                 </button>
               </GlassCard>
             )}
@@ -804,7 +816,7 @@ export default function EventDetailScreen({
         </button>
         <button
           className="glass-card rounded-2xl p-3 flex flex-col items-center gap-1.5 border border-outline-variant/15 active:scale-95 transition-all disabled:opacity-50"
-          disabled={!canUploadImages}
+          disabled={!canUploadImages || isUploadingPhoto}
           onClick={() => {
             if (!canUploadImages) {
               setPhotoError("Image upload is disabled for your account.");
@@ -814,12 +826,16 @@ export default function EventDetailScreen({
           }}
           type="button"
         >
-          <span className="material-symbols-outlined text-secondary text-lg">
-            photo_library
-          </span>
+          {isUploadingPhoto ? (
+            <div className="w-5 h-5 border-2 border-secondary border-t-transparent rounded-full animate-spin" />
+          ) : (
+            <span className="material-symbols-outlined text-secondary text-lg">
+              photo_library
+            </span>
+          )}
           <span className="text-[9px] font-label font-bold uppercase tracking-wider text-on-surface-variant">
             {isUploadingPhoto
-              ? "Uploading"
+              ? "Uploading..."
               : canUploadImages
                 ? "Photos"
                 : "No Upload"}
@@ -1033,7 +1049,11 @@ export default function EventDetailScreen({
             onClick={handleAddComment}
             type="button"
           >
-            <span className="material-symbols-outlined text-sm">send</span>
+            {isSubmittingComment ? (
+              <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <span className="material-symbols-outlined text-sm">send</span>
+            )}
           </button>
         </div>
 
