@@ -35,14 +35,16 @@ export const BottomNavBar = ({
             className={`flex flex-col items-center justify-center px-4 py-2 transition-all active:scale-90 duration-300 ease-out rounded-2xl ${
               isActive
                 ? "bg-primary/20 text-primary"
-                : "text-slate-500 hover:text-secondary"
+                : "text-slate-300 hover:text-secondary"
             }`}
             aria-label={item.label}
           >
             <span
               className="material-symbols-outlined mb-1"
               style={
-                isActive ? { fontVariationSettings: "'FILL' 1" } : undefined
+                isActive
+                  ? { fontVariationSettings: "'FILL' 1" }
+                  : { fontVariationSettings: "'FILL' 0, 'wght' 500" }
               }
             >
               {item.icon}

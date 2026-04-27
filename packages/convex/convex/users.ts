@@ -72,16 +72,34 @@ function buildSuperheroAlias(seed: string) {
 
 function resolveClerkDisplayName(identity: {
   tokenIdentifier?: string | null;
+  name?: string | null;
+  givenName?: string | null;
+  familyName?: string | null;
   nickname?: string | null;
   email?: string | null;
   username?: string | null;
 }) {
-  const name = identity.username?.trim() || identity.nickname?.trim();
-  if (name) {
-    return name;
+  const fullName = [identity.givenName?.trim(), identity.familyName?.trim()]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+
+  const preferredName =
+    identity.name?.trim() ||
+    fullName ||
+    identity.username?.trim() ||
+    identity.nickname?.trim();
+
+  if (preferredName) {
+    return preferredName;
   }
 
   const normalizedEmail = normalizeEmail(identity.email);
+  const [emailHandle] = normalizedEmail.split("@");
+  if (emailHandle?.trim()) {
+    return emailHandle.trim();
+  }
+
   const seed = `${identity.tokenIdentifier ?? ""}|${normalizedEmail}`;
 
   return buildSuperheroAlias(seed);
@@ -323,6 +341,8 @@ export const currentUser = query({
   args: {},
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
+
+    console.log({ identity });
     if (!identity) return null;
 
     return await ctx.db

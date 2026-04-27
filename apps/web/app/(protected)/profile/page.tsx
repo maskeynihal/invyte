@@ -14,14 +14,27 @@ export default function ProfilePage() {
   const router = useRouter();
   const { isLoading, isAuthenticated } = useConvexAuth();
   const { isLoaded: isUserLoaded, user } = useUser();
-  const profile = useQuery(api.events.getProfileData, isAuthenticated ? {} : "skip");
-  const access = useQuery(api.users.getCurrentUserAccess, isAuthenticated ? {} : "skip");
-  const currentUser = useQuery(api.users.currentUser, isAuthenticated ? {} : "skip");
+  const profile = useQuery(
+    api.events.getProfileData,
+    isAuthenticated ? {} : "skip",
+  );
+  const access = useQuery(
+    api.users.getCurrentUserAccess,
+    isAuthenticated ? {} : "skip",
+  );
+  const currentUser = useQuery(
+    api.users.currentUser,
+    isAuthenticated ? {} : "skip",
+  );
+
+  console.log({ currentUser });
   const updateDisplayName = useMutation(api.users.updateDisplayName);
 
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameInput, setNameInput] = useState("");
   const [isSavingName, setIsSavingName] = useState(false);
+
+  console.log({ user });
 
   if (
     isLoading ||
@@ -50,14 +63,12 @@ export default function ProfilePage() {
   const memberProfile = profile;
   const canCreateEvents = access.effectiveFeatures.canEventCreation;
 
-  const email = user?.primaryEmailAddress?.emailAddress ?? "Signed in with Clerk";
+  const email =
+    user?.primaryEmailAddress?.emailAddress ?? "Signed in with Clerk";
   const emailHandle = user?.primaryEmailAddress?.emailAddress?.split("@")[0];
   // Prefer the Convex stored name (which the user can customise) over the Clerk name.
   const displayName =
-    currentUser?.name ??
-    user?.fullName ??
-    user?.firstName ??
-    "Your profile";
+    currentUser?.name ?? user?.fullName ?? user?.firstName ?? "Your profile";
   const handle =
     user?.username ??
     emailHandle ??
@@ -89,7 +100,13 @@ export default function ProfilePage() {
       <section className="animate-fade-in">
         <div className="flex flex-col items-center text-center mb-8">
           <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-primary/30 shadow-neon-purple mb-4">
-            <Image alt={displayName} className="object-cover" fill src={imageUrl} unoptimized />
+            <Image
+              alt={displayName}
+              className="object-cover"
+              fill
+              src={imageUrl}
+              unoptimized
+            />
           </div>
 
           {isEditingName ? (
@@ -115,7 +132,9 @@ export default function ProfilePage() {
                 {isSavingName ? (
                   <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                 ) : (
-                  <span className="material-symbols-outlined text-sm">check</span>
+                  <span className="material-symbols-outlined text-sm">
+                    check
+                  </span>
                 )}
               </button>
               <button
@@ -128,7 +147,9 @@ export default function ProfilePage() {
             </div>
           ) : (
             <div className="flex items-center gap-2 mt-1">
-              <h1 className="font-headline text-2xl font-black">{displayName}</h1>
+              <h1 className="font-headline text-2xl font-black">
+                {displayName}
+              </h1>
               <button
                 className="text-on-surface-variant opacity-60 hover:opacity-100 transition-opacity"
                 onClick={() => {
@@ -138,7 +159,9 @@ export default function ProfilePage() {
                 title="Edit display name"
                 type="button"
               >
-                <span className="material-symbols-outlined text-base">edit</span>
+                <span className="material-symbols-outlined text-base">
+                  edit
+                </span>
               </button>
             </div>
           )}
@@ -213,7 +236,9 @@ export default function ProfilePage() {
               onClick={() => router.push("/admin/users")}
               type="button"
             >
-              <span className="material-symbols-outlined text-tertiary mb-2">admin_panel_settings</span>
+              <span className="material-symbols-outlined text-tertiary mb-2">
+                admin_panel_settings
+              </span>
               <p className="text-xs font-label font-bold uppercase tracking-wider text-on-surface-variant">
                 Admin
               </p>
@@ -225,10 +250,16 @@ export default function ProfilePage() {
         <div className="space-y-3 mb-6">
           {memberProfile.hostedEvents.length === 0 ? (
             <GlassCard className="p-6 flex flex-col items-center text-center gap-3">
-              <span className="material-symbols-outlined text-primary text-3xl">celebration</span>
+              <span className="material-symbols-outlined text-primary text-3xl">
+                celebration
+              </span>
               <div>
-                <p className="font-label font-bold text-sm text-on-surface">Host your first party</p>
-                <p className="text-xs text-on-surface-variant mt-1">Create an event and invite your people.</p>
+                <p className="font-label font-bold text-sm text-on-surface">
+                  Host your first party
+                </p>
+                <p className="text-xs text-on-surface-variant mt-1">
+                  Create an event and invite your people.
+                </p>
               </div>
               {canCreateEvents && (
                 <button
@@ -248,10 +279,18 @@ export default function ProfilePage() {
                 onClick={() => router.push(`/event/${event._id}`)}
               >
                 <div className="relative w-14 h-14 rounded-xl overflow-hidden flex-shrink-0">
-                  <Image alt={event.title} className="object-cover" fill src={event.coverImage} unoptimized />
+                  <Image
+                    alt={event.title}
+                    className="object-cover"
+                    fill
+                    src={event.coverImage}
+                    unoptimized
+                  />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-label font-bold text-sm truncate">{event.title}</h3>
+                  <h3 className="font-label font-bold text-sm truncate">
+                    {event.title}
+                  </h3>
                   <p className="text-xs text-on-surface-variant font-medium">
                     {event.date} • {event.time}
                   </p>
@@ -278,10 +317,18 @@ export default function ProfilePage() {
                 onClick={() => router.push(`/event/${event._id}`)}
               >
                 <div className="relative w-14 h-14 rounded-xl overflow-hidden flex-shrink-0">
-                  <Image alt={event.title} className="object-cover" fill src={event.coverImage} unoptimized />
+                  <Image
+                    alt={event.title}
+                    className="object-cover"
+                    fill
+                    src={event.coverImage}
+                    unoptimized
+                  />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-label font-bold text-sm truncate">{event.title}</h3>
+                  <h3 className="font-label font-bold text-sm truncate">
+                    {event.title}
+                  </h3>
                   <p className="text-xs text-on-surface-variant font-medium">
                     {event.date} • {event.location}
                   </p>

@@ -36,9 +36,10 @@
   }
 
   .glass-nav {
-    background: rgba(14, 14, 19, 0.6);
+    background: rgba(14, 14, 19, 0.84);
     backdrop-filter: blur(40px);
     -webkit-backdrop-filter: blur(40px);
+    border-top: 1px solid rgba(248, 245, 253, 0.08);
   }
 
   .gradient-text {
