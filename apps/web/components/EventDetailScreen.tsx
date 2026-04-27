@@ -560,20 +560,34 @@ export default function EventDetailScreen({
             {event.isHost ? "Host Status" : "Are you coming?"}
           </label>
           {event.currentUserRsvp?.rsvpStatus === "going" && (
-            <button
-              className="text-xs font-label font-bold text-primary uppercase tracking-wider"
-              onClick={() => {
-                const search = event.currentUserRsvp?.accessToken
-                  ? `?access=${encodeURIComponent(event.currentUserRsvp.accessToken)}`
-                  : "";
-                router.push(
-                  `/event/${event._id}/pass/${event.currentUserRsvp?.id}${search}`,
-                );
-              }}
-              type="button"
-            >
-              Open Pass
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                className="text-xs font-label font-bold text-primary uppercase tracking-wider"
+                onClick={() => {
+                  const search = event.currentUserRsvp?.accessToken
+                    ? `?access=${encodeURIComponent(event.currentUserRsvp.accessToken)}`
+                    : "";
+                  router.push(
+                    `/event/${event._id}/pass/${event.currentUserRsvp?.id}${search}`,
+                  );
+                }}
+                type="button"
+              >
+                Open Pass
+              </button>
+              <button
+                className="text-xs font-label font-bold text-on-surface-variant uppercase tracking-wider"
+                onClick={() =>
+                  handleCopyPassLink(
+                    event.currentUserRsvp?.id as Id<"attendees">,
+                    event.currentUserRsvp?.accessToken,
+                  )
+                }
+                type="button"
+              >
+                Copy Pass Link
+              </button>
+            </div>
           )}
         </div>
         {event.isHost ? (
