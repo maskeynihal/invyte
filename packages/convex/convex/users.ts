@@ -22,27 +22,69 @@ function normalizeEmail(email: string | null | undefined) {
 
 const GUEST_TOKEN_PREFIX = "guest:";
 
+const SUPERHERO_ADJECTIVES = [
+  "Cosmic",
+  "Shadow",
+  "Neon",
+  "Thunder",
+  "Solar",
+  "Frost",
+  "Crimson",
+  "Quantum",
+  "Iron",
+  "Nova",
+] as const;
+
+const SUPERHERO_TITLES = [
+  "Sentinel",
+  "Falcon",
+  "Guardian",
+  "Ranger",
+  "Titan",
+  "Vortex",
+  "Comet",
+  "Phoenix",
+  "Cipher",
+  "Blaze",
+] as const;
+
 function isGuestTokenIdentifier(tokenIdentifier: string | null | undefined) {
   return Boolean(tokenIdentifier?.startsWith(GUEST_TOKEN_PREFIX));
 }
 
+function stableHash(seed: string) {
+  let hash = 0;
+  for (let index = 0; index < seed.length; index += 1) {
+    hash = (hash * 31 + seed.charCodeAt(index)) >>> 0;
+  }
+  return hash;
+}
+
+function buildSuperheroAlias(seed: string) {
+  const hash = stableHash(seed || "invyte-default-hero");
+  const adjective = SUPERHERO_ADJECTIVES[hash % SUPERHERO_ADJECTIVES.length];
+  const title =
+    SUPERHERO_TITLES[Math.floor(hash / 7) % SUPERHERO_TITLES.length];
+  const code = hash.toString(36).slice(-4).toUpperCase().padStart(4, "0");
+
+  return `I'm ${adjective} ${title} ${code}`;
+}
+
 function resolveClerkDisplayName(identity: {
-  name?: string | null;
+  tokenIdentifier?: string | null;
   nickname?: string | null;
   email?: string | null;
+  username?: string | null;
 }) {
-  const name = identity.name?.trim() || identity.nickname?.trim();
+  const name = identity.username?.trim() || identity.nickname?.trim();
   if (name) {
     return name;
   }
 
   const normalizedEmail = normalizeEmail(identity.email);
-  const [emailHandle] = normalizedEmail.split("@");
-  if (emailHandle?.trim()) {
-    return emailHandle;
-  }
+  const seed = `${identity.tokenIdentifier ?? ""}|${normalizedEmail}`;
 
-  return "User";
+  return buildSuperheroAlias(seed);
 }
 
 async function migrateGuestParticipationToAuthenticatedUser(

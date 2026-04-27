@@ -716,6 +716,18 @@ export const getEventRsvpDetails = query({
       return null;
     }
 
+    const identity = await ctx.auth.getUserIdentity();
+    const currentUserRsvp = identity
+      ? await ctx.db
+          .query("attendees")
+          .withIndex("by_event_and_userTokenIdentifier", (q) =>
+            q
+              .eq("eventId", args.id)
+              .eq("userTokenIdentifier", identity.tokenIdentifier),
+          )
+          .unique()
+      : null;
+
     const hostUser = await getUserByTokenIdentifier(ctx, event.hostId);
     const attendees = await getGoingAttendeesExcludingHost(ctx, event);
 
@@ -731,6 +743,14 @@ export const getEventRsvpDetails = query({
       hostName: hostUser?.name ?? event.hostName,
       hostAvatar: hostUser?.avatar ?? event.hostAvatar,
       allowPlusOne: event.allowPlusOne,
+      currentUserRsvp: currentUserRsvp
+        ? {
+            rsvpStatus: currentUserRsvp.rsvpStatus,
+            plusOne: currentUserRsvp.plusOne,
+            plusOneName: currentUserRsvp.plusOneName,
+            dietaryRestrictions: currentUserRsvp.dietaryRestrictions,
+          }
+        : null,
       attendeeCount: attendees.length,
       attendees: await Promise.all(
         attendees

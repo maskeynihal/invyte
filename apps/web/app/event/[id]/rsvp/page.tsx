@@ -16,6 +16,7 @@ export default function GuestRsvpPage() {
   const [rsvp, setRsvp] = useState<"going" | "maybe" | "not-going" | null>(
     null,
   );
+  const [isChangingResponse, setIsChangingResponse] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -35,8 +36,22 @@ export default function GuestRsvpPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const event = useQuery(api.events.getEventRsvpDetails, { id: params.id });
   const submitGuestRsvp = useMutation(api.events.submitGuestRsvp);
-  console.log({ user });
   const upsertMemberRsvp = useMutation(api.events.upsertMemberRsvp);
+
+  useEffect(() => {
+    if (!event?.currentUserRsvp || !isSignedIn) {
+      return;
+    }
+
+    setRsvp(event.currentUserRsvp.rsvpStatus);
+    setFormData((current) => ({
+      ...current,
+      plusOne: event.currentUserRsvp?.plusOne ?? false,
+      plusOneName: event.currentUserRsvp?.plusOneName ?? "",
+      dietaryRestrictions: event.currentUserRsvp?.dietaryRestrictions ?? "",
+    }));
+    setIsChangingResponse(false);
+  }, [event, isSignedIn]);
 
   const selectedRsvpLabel = rsvp
     ? {
@@ -45,6 +60,15 @@ export default function GuestRsvpPage() {
         "not-going": "Can't 😢",
       }[rsvp]
     : null;
+  const hasPreviousResponse = Boolean(isSignedIn && event?.currentUserRsvp);
+  const previousRsvpLabel = event?.currentUserRsvp
+    ? {
+        going: "Going! 🎉",
+        maybe: "Maybe 🤔",
+        "not-going": "Can't 😢",
+      }[event.currentUserRsvp.rsvpStatus]
+    : null;
+  const canEditResponse = !hasPreviousResponse || isChangingResponse;
 
   const handleSubmit = async () => {
     if (!rsvp || !event || isSubmitting) {
@@ -197,9 +221,34 @@ export default function GuestRsvpPage() {
           </span>
         </div>
 
-        <div className="space-y-3">
+        {hasPreviousResponse && (
+          <GlassCard className="p-4 space-y-3">
+            <p className="font-label font-bold text-xs uppercase tracking-widest text-outline">
+              Your previous response
+            </p>
+            <p className="text-sm text-on-surface">
+              You already responded:{" "}
+              <span className="font-semibold">{previousRsvpLabel}</span>
+            </p>
+            {!isChangingResponse && (
+              <button
+                className="btn-primary"
+                type="button"
+                onClick={() => setIsChangingResponse(true)}
+              >
+                Want to change it?
+              </button>
+            )}
+          </GlassCard>
+        )}
+
+        <div className={`space-y-3 ${!canEditResponse ? "opacity-60" : ""}`}>
           <label className="label-text">
-            {isSignedIn ? "Confirm your response" : "Will you be there?"}
+            {isSignedIn
+              ? canEditResponse
+                ? "Confirm your response"
+                : "Want to update your response?"
+              : "Will you be there?"}
           </label>
           <div className="grid grid-cols-3 gap-3">
             {[
@@ -226,6 +275,7 @@ export default function GuestRsvpPage() {
                 onClick={() =>
                   setRsvp(option.value as "going" | "maybe" | "not-going")
                 }
+                disabled={!canEditResponse}
                 className={`py-4 rounded-2xl border font-label font-bold text-sm transition-all active:scale-95 ${
                   rsvp === option.value
                     ? option.activeColor
@@ -239,7 +289,7 @@ export default function GuestRsvpPage() {
           </div>
         </div>
 
-        {rsvp && (
+        {rsvp && canEditResponse && (
           <div className="space-y-4 animate-slide-up">
             {isSignedIn ? (
               <GlassCard className="p-4 space-y-4">
