@@ -257,46 +257,47 @@ export default function ProfilePage() {
           )}
         </div>
 
-        <GlassCard className="p-4 mb-6 border border-primary/15 bg-gradient-to-br from-primary/10 to-secondary/10">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-xs font-label font-bold uppercase tracking-widest text-on-surface-variant">
-                Guest RSVPs
-              </p>
-              <h2 className="font-headline text-lg font-black mt-1">
-                Transfer RSVP history
-              </h2>
-              <p className="text-sm text-on-surface-variant mt-2 max-w-md">
-                Move every RSVP you made with this email as a guest into your
-                signed-in account so it appears in your profile and event pass
-                records.
+        {guestRsvps.guestRsvpCount > 0 && (
+          <GlassCard className="p-4 mb-6 border border-primary/15 bg-gradient-to-br from-primary/10 to-secondary/10">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-label font-bold uppercase tracking-widest text-on-surface-variant">
+                  Guest RSVPs
+                </p>
+                <h2 className="font-headline text-lg font-black mt-1">
+                  Transfer RSVP history
+                </h2>
+                <p className="text-sm text-on-surface-variant mt-2 max-w-md">
+                  Move every RSVP you made with this email as a guest into your
+                  signed-in account so it appears in your profile and event pass
+                  records.
+                </p>
+              </div>
+              <div className="text-right shrink-0">
+                <p className="font-headline text-2xl font-black text-primary">
+                  {guestRsvps.guestRsvpCount}
+                </p>
+                <p className="text-[10px] font-label font-bold uppercase tracking-widest text-on-surface-variant">
+                  Found
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-3 mt-4">
+              <button
+                className="btn-primary text-xs px-4 py-2"
+                onClick={() => router.push("/profile/guest-rsvps")}
+                type="button"
+              >
+                Review and transfer
+              </button>
+              <p className="text-xs text-on-surface-variant self-center">
+                {guestRsvps.guestRsvpCount === 0
+                  ? "No guest RSVPs were found for this email."
+                  : `${guestRsvps.guestGoingCount} marked as going`}
               </p>
             </div>
-            <div className="text-right shrink-0">
-              <p className="font-headline text-2xl font-black text-primary">
-                {guestRsvps.guestRsvpCount}
-              </p>
-              <p className="text-[10px] font-label font-bold uppercase tracking-widest text-on-surface-variant">
-                Found
-              </p>
-            </div>
-          </div>
-          <div className="flex flex-wrap gap-3 mt-4">
-            <button
-              className="btn-primary text-xs px-4 py-2"
-              onClick={() => router.push("/profile/guest-rsvps")}
-              type="button"
-            >
-              Review and transfer
-            </button>
-            <p className="text-xs text-on-surface-variant self-center">
-              {guestRsvps.guestRsvpCount === 0
-                ? "No guest RSVPs were found for this email."
-                : `${guestRsvps.guestGoingCount} marked as going`}
-            </p>
-          </div>
-        </GlassCard>
-
+          </GlassCard>
+        )}
         <h2 className="font-headline text-lg font-bold mb-3">Hosted Events</h2>
         <div className="space-y-3 mb-6">
           {memberProfile.hostedEvents.length === 0 ? (
