@@ -7,6 +7,7 @@ import { useUser } from "@clerk/nextjs";
 import { GlassCard } from "@invyte/ui/glass-card";
 import { useMutation, useQuery } from "convex/react";
 import { api, type Id } from "@invyte/convex";
+import { ConvexError } from "convex/values";
 
 export default function GuestRsvpPage() {
   const params = useParams<{ id: Id<"events"> }>();
@@ -34,6 +35,7 @@ export default function GuestRsvpPage() {
   }, [user]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const event = useQuery(api.events.getEventRsvpDetails, { id: params.id });
   const submitGuestRsvp = useMutation(api.events.submitGuestRsvp);
   const upsertMemberRsvp = useMutation(api.events.upsertMemberRsvp);
@@ -70,12 +72,39 @@ export default function GuestRsvpPage() {
     : null;
   const canEditResponse = !hasPreviousResponse || isChangingResponse;
 
+  function getFriendlyErrorMessage(error: unknown) {
+    if (!(error instanceof ConvexError)) {
+      return "Unable to submit RSVP right now.";
+    }
+
+    const rawMessage = error.message.trim();
+    const convextMessageMatch = rawMessage.match(
+      /This email is already used for RSVP/,
+    );
+
+    if (convextMessageMatch?.[0]) {
+      return convextMessageMatch[0].trim();
+    }
+
+    if (rawMessage.startsWith("[CONVEX M(")) {
+      const messageSegment = rawMessage.split(
+        "Server Error Uncaught Error:",
+      )[1];
+      if (messageSegment) {
+        return messageSegment.split(" at handler")[0]?.trim() ?? rawMessage;
+      }
+    }
+
+    return rawMessage;
+  }
+
   const handleSubmit = async () => {
     if (!rsvp || !event || isSubmitting) {
       return;
     }
 
     setIsSubmitting(true);
+    setSubmitError(null);
     try {
       const response = isSignedIn
         ? await upsertMemberRsvp({
@@ -103,6 +132,8 @@ export default function GuestRsvpPage() {
       router.push(
         `/event/${event._id}/pass/${response.attendeeId}?access=${encodeURIComponent(response.accessToken)}`,
       );
+    } catch (error) {
+      setSubmitError(getFriendlyErrorMessage(error));
     } finally {
       setIsSubmitting(false);
     }
@@ -288,6 +319,14 @@ export default function GuestRsvpPage() {
             ))}
           </div>
         </div>
+
+        {submitError && (
+          <GlassCard className="p-4 border border-error/20 bg-error/10">
+            <p className="text-sm font-medium text-error leading-relaxed">
+              {submitError}
+            </p>
+          </GlassCard>
+        )}
 
         {rsvp && canEditResponse && (
           <div className="space-y-4 animate-slide-up">
