@@ -12,6 +12,7 @@ export default function GuestRsvpPage() {
   const params = useParams<{ id: Id<"events"> }>();
   const router = useRouter();
   const { user } = useUser();
+  const isSignedIn = Boolean(user);
   const [rsvp, setRsvp] = useState<"going" | "maybe" | "not-going" | null>(
     null,
   );
@@ -34,30 +35,50 @@ export default function GuestRsvpPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const event = useQuery(api.events.getEventRsvpDetails, { id: params.id });
   const submitGuestRsvp = useMutation(api.events.submitGuestRsvp);
+  console.log({ user });
+  const upsertMemberRsvp = useMutation(api.events.upsertMemberRsvp);
+
+  const selectedRsvpLabel = rsvp
+    ? {
+        going: "Going! 🎉",
+        maybe: "Maybe 🤔",
+        "not-going": "Can't 😢",
+      }[rsvp]
+    : null;
 
   const handleSubmit = async () => {
-    if (!rsvp || !formData.name.trim() || !formData.email.trim() || !event || isSubmitting) {
+    if (!rsvp || !event || isSubmitting) {
       return;
     }
 
     setIsSubmitting(true);
     try {
-    const response = await submitGuestRsvp({
-      eventId: event._id,
-      name: formData.name.trim(),
-      email: formData.email.trim(),
-      rsvpStatus: rsvp,
-      plusOne: formData.plusOne,
-      plusOneName: formData.plusOneName.trim() || undefined,
-      dietaryRestrictions: formData.dietaryRestrictions.trim() || undefined,
-      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(
-        formData.name.trim(),
-      )}`,
-    });
+      const response = isSignedIn
+        ? await upsertMemberRsvp({
+            eventId: event._id,
+            rsvpStatus: rsvp,
+            plusOne: formData.plusOne,
+            plusOneName: formData.plusOneName.trim() || undefined,
+            dietaryRestrictions:
+              formData.dietaryRestrictions.trim() || undefined,
+          })
+        : await submitGuestRsvp({
+            eventId: event._id,
+            name: formData.name.trim(),
+            email: formData.email.trim(),
+            rsvpStatus: rsvp,
+            plusOne: formData.plusOne,
+            plusOneName: formData.plusOneName.trim() || undefined,
+            dietaryRestrictions:
+              formData.dietaryRestrictions.trim() || undefined,
+            avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(
+              formData.name.trim(),
+            )}`,
+          });
 
-    router.push(
-      `/event/${event._id}/pass/${response.attendeeId}?access=${encodeURIComponent(response.accessToken)}`,
-    );
+      router.push(
+        `/event/${event._id}/pass/${response.attendeeId}?access=${encodeURIComponent(response.accessToken)}`,
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -177,7 +198,9 @@ export default function GuestRsvpPage() {
         </div>
 
         <div className="space-y-3">
-          <label className="label-text">Will you be there?</label>
+          <label className="label-text">
+            {isSignedIn ? "Confirm your response" : "Will you be there?"}
+          </label>
           <div className="grid grid-cols-3 gap-3">
             {[
               {
@@ -218,74 +241,55 @@ export default function GuestRsvpPage() {
 
         {rsvp && (
           <div className="space-y-4 animate-slide-up">
-            <div className="space-y-2">
-              <label className="label-text">Your Name</label>
-              <input
-                className="input-field"
-                placeholder="Enter your name"
-                value={formData.name}
-                onChange={(event) =>
-                  setFormData((current) => ({
-                    ...current,
-                    name: event.target.value,
-                  }))
-                }
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="label-text">Email</label>
-              <input
-                className="input-field"
-                placeholder="you@email.com"
-                type="email"
-                value={formData.email}
-                onChange={(event) =>
-                  setFormData((current) => ({
-                    ...current,
-                    email: event.target.value,
-                  }))
-                }
-              />
-            </div>
-
-            {rsvp === "going" && event.allowPlusOne && (
-              <>
-                <div className="glass-card rounded-2xl p-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <span className="material-symbols-outlined text-secondary">
-                      group_add
-                    </span>
-                    <div>
-                      <p className="font-label font-bold text-sm">
-                        Bringing a +1?
-                      </p>
-                      <p className="text-xs text-on-surface-variant">
-                        Add a guest
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() =>
-                      setFormData((current) => ({
-                        ...current,
-                        plusOne: !current.plusOne,
-                      }))
-                    }
-                    className={`w-12 h-7 rounded-full transition-all duration-300 relative ${
-                      formData.plusOne
-                        ? "bg-secondary"
-                        : "bg-surface-container-highest"
-                    }`}
-                    type="button"
-                  >
-                    <div
-                      className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-all duration-300 ${
-                        formData.plusOne ? "left-6" : "left-1"
-                      }`}
-                    />
-                  </button>
+            {isSignedIn ? (
+              <GlassCard className="p-4 space-y-4">
+                <div className="space-y-1">
+                  <p className="font-label font-bold text-xs uppercase tracking-widest text-outline">
+                    Confirm RSVP
+                  </p>
+                  <p className="text-sm text-on-surface">
+                    {selectedRsvpLabel} for{" "}
+                    {user?.fullName || user?.firstName || "you"}.
+                  </p>
                 </div>
+
+                {rsvp === "going" && event.allowPlusOne && (
+                  <div className="glass-card rounded-2xl p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-secondary">
+                        group_add
+                      </span>
+                      <div>
+                        <p className="font-label font-bold text-sm">
+                          Bringing a +1?
+                        </p>
+                        <p className="text-xs text-on-surface-variant">
+                          Add a guest
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() =>
+                        setFormData((current) => ({
+                          ...current,
+                          plusOne: !current.plusOne,
+                        }))
+                      }
+                      className={`w-12 h-7 rounded-full transition-all duration-300 relative ${
+                        formData.plusOne
+                          ? "bg-secondary"
+                          : "bg-surface-container-highest"
+                      }`}
+                      type="button"
+                    >
+                      <div
+                        className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-all duration-300 ${
+                          formData.plusOne ? "left-6" : "left-1"
+                        }`}
+                      />
+                    </button>
+                  </div>
+                )}
 
                 {formData.plusOne && (
                   <div className="space-y-2 animate-slide-up">
@@ -305,12 +309,10 @@ export default function GuestRsvpPage() {
                 )}
 
                 <div className="space-y-2">
-                  <label className="label-text">
-                    Anything else the host should know?
-                  </label>
-                  <input
-                    className="input-field"
-                    placeholder="Dietary choices, arrival time..."
+                  <label className="label-text">Notes for the host</label>
+                  <textarea
+                    className="input-field min-h-[120px] resize-none"
+                    placeholder="Dietary choices, arrival time, accessibility notes..."
                     value={formData.dietaryRestrictions}
                     onChange={(event) =>
                       setFormData((current) => ({
@@ -320,20 +322,143 @@ export default function GuestRsvpPage() {
                     }
                   />
                 </div>
+
+                <button
+                  className="btn-primary mt-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  onClick={handleSubmit}
+                  disabled={isSubmitting}
+                  type="button"
+                >
+                  {isSubmitting && (
+                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  )}
+                  {isSubmitting ? "Confirming..." : "Confirm RSVP"}
+                </button>
+              </GlassCard>
+            ) : (
+              <>
+                <div className="space-y-2">
+                  <label className="label-text">Your Name</label>
+                  <input
+                    className="input-field"
+                    placeholder="Enter your name"
+                    value={formData.name}
+                    onChange={(event) =>
+                      setFormData((current) => ({
+                        ...current,
+                        name: event.target.value,
+                      }))
+                    }
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="label-text">Email</label>
+                  <input
+                    className="input-field"
+                    placeholder="you@email.com"
+                    type="email"
+                    value={formData.email}
+                    onChange={(event) =>
+                      setFormData((current) => ({
+                        ...current,
+                        email: event.target.value,
+                      }))
+                    }
+                  />
+                </div>
+
+                {rsvp === "going" && event.allowPlusOne && (
+                  <>
+                    <div className="glass-card rounded-2xl p-4 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className="material-symbols-outlined text-secondary">
+                          group_add
+                        </span>
+                        <div>
+                          <p className="font-label font-bold text-sm">
+                            Bringing a +1?
+                          </p>
+                          <p className="text-xs text-on-surface-variant">
+                            Add a guest
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() =>
+                          setFormData((current) => ({
+                            ...current,
+                            plusOne: !current.plusOne,
+                          }))
+                        }
+                        className={`w-12 h-7 rounded-full transition-all duration-300 relative ${
+                          formData.plusOne
+                            ? "bg-secondary"
+                            : "bg-surface-container-highest"
+                        }`}
+                        type="button"
+                      >
+                        <div
+                          className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-all duration-300 ${
+                            formData.plusOne ? "left-6" : "left-1"
+                          }`}
+                        />
+                      </button>
+                    </div>
+
+                    {formData.plusOne && (
+                      <div className="space-y-2 animate-slide-up">
+                        <label className="label-text">+1 Name</label>
+                        <input
+                          className="input-field"
+                          placeholder="Your guest's name"
+                          value={formData.plusOneName}
+                          onChange={(event) =>
+                            setFormData((current) => ({
+                              ...current,
+                              plusOneName: event.target.value,
+                            }))
+                          }
+                        />
+                      </div>
+                    )}
+
+                    <div className="space-y-2">
+                      <label className="label-text">
+                        Anything else the host should know?
+                      </label>
+                      <textarea
+                        className="input-field min-h-[120px] resize-none"
+                        placeholder="Dietary choices, arrival time, accessibility notes..."
+                        value={formData.dietaryRestrictions}
+                        onChange={(event) =>
+                          setFormData((current) => ({
+                            ...current,
+                            dietaryRestrictions: event.target.value,
+                          }))
+                        }
+                      />
+                    </div>
+                  </>
+                )}
+
+                <button
+                  className="btn-primary mt-4 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  onClick={handleSubmit}
+                  disabled={
+                    !formData.name.trim() ||
+                    !formData.email.trim() ||
+                    isSubmitting
+                  }
+                  type="button"
+                >
+                  {isSubmitting && (
+                    <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  )}
+                  {isSubmitting ? "Confirming..." : "Confirm RSVP"}
+                </button>
               </>
             )}
-
-            <button
-              className="btn-primary mt-4 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              onClick={handleSubmit}
-              disabled={!formData.name.trim() || !formData.email.trim() || isSubmitting}
-              type="button"
-            >
-              {isSubmitting && (
-                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-              )}
-              {isSubmitting ? "Confirming..." : "Confirm RSVP"}
-            </button>
           </div>
         )}
 
