@@ -54,6 +54,25 @@ export default defineSchema({
     ])
     .index("by_userTokenIdentifier", ["userTokenIdentifier"]),
 
+  guestRsvpAttempts: defineTable({
+    eventId: v.id("events"),
+    existingAttendeeId: v.optional(v.id("attendees")),
+    name: v.string(),
+    email: v.string(),
+    rsvpStatus: v.union(
+      v.literal("going"),
+      v.literal("maybe"),
+      v.literal("not-going"),
+    ),
+    plusOne: v.boolean(),
+    plusOneName: v.optional(v.string()),
+    dietaryRestrictions: v.optional(v.string()),
+    avatar: v.optional(v.string()),
+    reason: v.literal("email-already-used"),
+  })
+    .index("by_event", ["eventId"])
+    .index("by_event_and_email", ["eventId", "email"]),
+
   comments: defineTable({
     eventId: v.id("events"),
     userId: v.optional(v.string()),

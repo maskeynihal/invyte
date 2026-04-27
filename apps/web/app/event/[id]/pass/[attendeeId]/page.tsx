@@ -176,8 +176,6 @@ export default function EntryPassPage() {
       ].join("\n"),
     });
 
-    console.log({ p: params.toString() });
-
     window.location.href = `mailto:${pass.attendee.email}?${params.toString()}`;
   };
 

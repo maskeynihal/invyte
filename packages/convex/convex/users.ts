@@ -20,29 +20,93 @@ function normalizeEmail(email: string | null | undefined) {
   return email?.trim().toLowerCase() ?? "";
 }
 
+function isGoing(status: "going" | "maybe" | "not-going") {
+  return status === "going";
+}
+
 const GUEST_TOKEN_PREFIX = "guest:";
+
+const SUPERHERO_ADJECTIVES = [
+  "Cosmic",
+  "Shadow",
+  "Neon",
+  "Thunder",
+  "Solar",
+  "Frost",
+  "Crimson",
+  "Quantum",
+  "Iron",
+  "Nova",
+] as const;
+
+const SUPERHERO_TITLES = [
+  "Sentinel",
+  "Falcon",
+  "Guardian",
+  "Ranger",
+  "Titan",
+  "Vortex",
+  "Comet",
+  "Phoenix",
+  "Cipher",
+  "Blaze",
+] as const;
 
 function isGuestTokenIdentifier(tokenIdentifier: string | null | undefined) {
   return Boolean(tokenIdentifier?.startsWith(GUEST_TOKEN_PREFIX));
 }
 
+function stableHash(seed: string) {
+  let hash = 0;
+  for (let index = 0; index < seed.length; index += 1) {
+    hash = (hash * 31 + seed.charCodeAt(index)) >>> 0;
+  }
+  return hash;
+}
+
+function buildSuperheroAlias(seed: string) {
+  const hash = stableHash(seed || "invyte-default-hero");
+  const adjective = SUPERHERO_ADJECTIVES[hash % SUPERHERO_ADJECTIVES.length];
+  const title =
+    SUPERHERO_TITLES[Math.floor(hash / 7) % SUPERHERO_TITLES.length];
+  const code = hash.toString(36).slice(-4).toUpperCase().padStart(4, "0");
+
+  return `I'm ${adjective} ${title} ${code}`;
+}
+
 function resolveClerkDisplayName(identity: {
+  tokenIdentifier?: string | null;
   name?: string | null;
+  givenName?: string | null;
+  familyName?: string | null;
   nickname?: string | null;
   email?: string | null;
+  username?: string | null;
 }) {
-  const name = identity.name?.trim() || identity.nickname?.trim();
-  if (name) {
-    return name;
+  const fullName = [identity.givenName?.trim(), identity.familyName?.trim()]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+
+  const preferredName =
+    identity.name?.trim() ||
+    fullName ||
+    identity.username?.trim() ||
+    identity.nickname?.trim();
+
+  if (preferredName) {
+    return preferredName;
   }
 
   const normalizedEmail = normalizeEmail(identity.email);
   const [emailHandle] = normalizedEmail.split("@");
   if (emailHandle?.trim()) {
-    return emailHandle;
+    return emailHandle.trim();
   }
 
-  return "User";
+  const seed = `${identity.tokenIdentifier ?? ""}|${normalizedEmail}`;
+
+  return buildSuperheroAlias(seed);
 }
 
 async function migrateGuestParticipationToAuthenticatedUser(
@@ -281,6 +345,7 @@ export const currentUser = query({
   args: {},
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
+
     if (!identity) return null;
 
     return await ctx.db
@@ -289,6 +354,178 @@ export const currentUser = query({
         q.eq("tokenIdentifier", identity.tokenIdentifier),
       )
       .unique();
+  },
+});
+
+export const getGuestRsvps = query({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      return null;
+    }
+
+    const normalizedEmail = normalizeEmail(identity.email);
+
+    if (!normalizedEmail) {
+      return {
+        guestEmail: null,
+        guestTokenIdentifier: null,
+        guestRsvps: [],
+        guestRsvpCount: 0,
+        guestGoingCount: 0,
+      };
+    }
+
+    const guestTokenIdentifier = `${GUEST_TOKEN_PREFIX}${normalizedEmail}`;
+    const guestAttendees = await ctx.db
+      .query("attendees")
+      .withIndex("by_email", (q) => q.eq("email", normalizedEmail))
+      .collect();
+
+    const guestRsvps = (
+      await Promise.all(
+        guestAttendees
+          .filter(
+            (attendee) =>
+              attendee.responseSource === "guest" ||
+              attendee.userTokenIdentifier === guestTokenIdentifier,
+          )
+          .sort((left, right) => right._creationTime - left._creationTime)
+          .map(async (attendee) => {
+            const event = await ctx.db.get(attendee.eventId);
+            if (!event) {
+              return null;
+            }
+
+            return {
+              attendeeId: attendee._id,
+              eventId: event._id,
+              title: event.title,
+              date: event.date,
+              time: event.time,
+              location: event.location,
+              coverImage: event.coverImage,
+              vibe: event.vibe,
+              rsvpStatus: attendee.rsvpStatus,
+              plusOne: attendee.plusOne,
+              plusOneName: attendee.plusOneName,
+              dietaryRestrictions: attendee.dietaryRestrictions,
+              responseSource: attendee.responseSource ?? "guest",
+              attendeeName: attendee.name,
+            };
+          }),
+      )
+    ).filter(
+      (attendee): attendee is NonNullable<typeof attendee> => attendee !== null,
+    );
+
+    return {
+      guestEmail: normalizedEmail,
+      guestTokenIdentifier,
+      guestRsvps,
+      guestRsvpCount: guestRsvps.length,
+      guestGoingCount: guestRsvps.filter((attendee) =>
+        isGoing(attendee.rsvpStatus),
+      ).length,
+    };
+  },
+});
+
+export const transferGuestRsvpsToAccount = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    const normalizedEmail = normalizeEmail(identity.email);
+    if (!normalizedEmail) {
+      throw new Error("An email address is required to transfer RSVPs");
+    }
+
+    const guestTokenIdentifier = `${GUEST_TOKEN_PREFIX}${normalizedEmail}`;
+    const memberName = resolveClerkDisplayName(identity);
+    const memberAvatar = identity.pictureUrl;
+
+    const guestAttendees = await ctx.db
+      .query("attendees")
+      .withIndex("by_email", (q) => q.eq("email", normalizedEmail))
+      .collect();
+
+    const transferableGuestAttendees = guestAttendees.filter(
+      (attendee) =>
+        attendee.responseSource === "guest" ||
+        attendee.userTokenIdentifier === guestTokenIdentifier,
+    );
+
+    let transferredCount = 0;
+    let mergedCount = 0;
+
+    for (const guestAttendee of transferableGuestAttendees) {
+      const event = await ctx.db.get(guestAttendee.eventId);
+      if (!event) {
+        continue;
+      }
+
+      const memberAttendee = await ctx.db
+        .query("attendees")
+        .withIndex("by_event_and_userTokenIdentifier", (q) =>
+          q
+            .eq("eventId", guestAttendee.eventId)
+            .eq("userTokenIdentifier", identity.tokenIdentifier),
+        )
+        .unique();
+
+      if (memberAttendee && memberAttendee._id !== guestAttendee._id) {
+        const previousGoing = isGoing(memberAttendee.rsvpStatus);
+        const nextGoing = isGoing(guestAttendee.rsvpStatus);
+
+        await ctx.db.patch(memberAttendee._id, {
+          name: memberName,
+          email: normalizedEmail,
+          avatar: memberAvatar ?? memberAttendee.avatar,
+          rsvpStatus: guestAttendee.rsvpStatus,
+          plusOne: event.allowPlusOne ? guestAttendee.plusOne : false,
+          plusOneName: event.allowPlusOne
+            ? guestAttendee.plusOneName
+            : undefined,
+          dietaryRestrictions: guestAttendee.dietaryRestrictions,
+          userTokenIdentifier: identity.tokenIdentifier,
+          responseSource: "member",
+        });
+
+        if (previousGoing !== nextGoing) {
+          await ctx.db.patch(event._id, {
+            attendeeCount:
+              (event.attendeeCount ?? 0) +
+              Number(nextGoing) -
+              Number(previousGoing),
+          });
+        }
+
+        await ctx.db.delete(guestAttendee._id);
+        mergedCount += 1;
+        transferredCount += 1;
+        continue;
+      }
+
+      await ctx.db.patch(guestAttendee._id, {
+        name: memberName,
+        email: normalizedEmail,
+        avatar: memberAvatar ?? guestAttendee.avatar,
+        userTokenIdentifier: identity.tokenIdentifier,
+        responseSource: "member",
+      });
+
+      transferredCount += 1;
+    }
+
+    return {
+      transferredCount,
+      mergedCount,
+    };
   },
 });
 

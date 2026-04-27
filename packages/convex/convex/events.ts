@@ -1,4 +1,4 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import {
   mutation,
   query,
@@ -27,6 +27,7 @@ const reactionEmojiValidator = v.union(
 
 type EventDoc = Doc<"events">;
 type AttendeeDoc = Doc<"attendees">;
+type GuestRsvpAttemptDoc = Doc<"guestRsvpAttempts">;
 type Context = QueryCtx | MutationCtx;
 type ViewerIdentity = {
   tokenIdentifier: string;
@@ -289,6 +290,36 @@ async function resolveUploaderDisplayName(
 
 function normalizeCounter(value: number | undefined) {
   return value ?? 0;
+}
+
+async function recordDuplicateGuestRsvp(
+  ctx: MutationCtx,
+  args: {
+    eventId: Id<"events">;
+    name: string;
+    email: string;
+    rsvpStatus: AttendeeDoc["rsvpStatus"];
+    plusOne: boolean;
+    plusOneName?: string;
+    dietaryRestrictions?: string;
+    avatar?: string;
+  },
+  existingAttendee: AttendeeDoc,
+) {
+  const attempt: Omit<GuestRsvpAttemptDoc, "_id" | "_creationTime"> = {
+    eventId: args.eventId,
+    existingAttendeeId: existingAttendee._id,
+    name: args.name,
+    email: args.email,
+    rsvpStatus: args.rsvpStatus,
+    plusOne: args.plusOne,
+    plusOneName: args.plusOneName,
+    dietaryRestrictions: args.dietaryRestrictions,
+    avatar: args.avatar,
+    reason: "email-already-used",
+  };
+
+  await ctx.db.insert("guestRsvpAttempts", omitUndefined(attempt));
 }
 
 function omitUndefined<T extends Record<string, unknown>>(value: T): T {
@@ -716,6 +747,18 @@ export const getEventRsvpDetails = query({
       return null;
     }
 
+    const identity = await ctx.auth.getUserIdentity();
+    const currentUserRsvp = identity
+      ? await ctx.db
+          .query("attendees")
+          .withIndex("by_event_and_userTokenIdentifier", (q) =>
+            q
+              .eq("eventId", args.id)
+              .eq("userTokenIdentifier", identity.tokenIdentifier),
+          )
+          .unique()
+      : null;
+
     const hostUser = await getUserByTokenIdentifier(ctx, event.hostId);
     const attendees = await getGoingAttendeesExcludingHost(ctx, event);
 
@@ -731,6 +774,14 @@ export const getEventRsvpDetails = query({
       hostName: hostUser?.name ?? event.hostName,
       hostAvatar: hostUser?.avatar ?? event.hostAvatar,
       allowPlusOne: event.allowPlusOne,
+      currentUserRsvp: currentUserRsvp
+        ? {
+            rsvpStatus: currentUserRsvp.rsvpStatus,
+            plusOne: currentUserRsvp.plusOne,
+            plusOneName: currentUserRsvp.plusOneName,
+            dietaryRestrictions: currentUserRsvp.dietaryRestrictions,
+          }
+        : null,
       attendeeCount: attendees.length,
       attendees: await Promise.all(
         attendees
@@ -1364,6 +1415,36 @@ export const submitGuestRsvp = mutation({
 
     const guestTokenIdentifier = getGuestTokenIdentifier(normalizedEmail);
     const guestAvatar = args.avatar ?? avatarFallback(args.name);
+    const existingRsvp = await ctx.db
+      .query("attendees")
+      .withIndex("by_event_and_email", (q) =>
+        q.eq("eventId", args.eventId).eq("email", normalizedEmail),
+      )
+      .take(1);
+
+    const existingAttendee = existingRsvp[0];
+
+    if (existingAttendee) {
+      await recordDuplicateGuestRsvp(
+        ctx,
+        {
+          eventId: args.eventId,
+          name: args.name,
+          email: normalizedEmail,
+          rsvpStatus: args.rsvpStatus,
+          plusOne: event.allowPlusOne ? args.plusOne : false,
+          plusOneName: event.allowPlusOne ? args.plusOneName : undefined,
+          dietaryRestrictions: args.dietaryRestrictions,
+          avatar: guestAvatar,
+        },
+        existingAttendee,
+      );
+
+      throw new ConvexError(
+        "This email is already used for RSVP. Check your email to update your RSVP.",
+      );
+    }
+
     const existingGuestUser = await ctx.db
       .query("users")
       .withIndex("by_token", (q) =>
@@ -1389,50 +1470,6 @@ export const submitGuestRsvp = mutation({
         tokenIdentifier: guestTokenIdentifier,
         isAnonymous: true,
       });
-    }
-
-    const existingGuestRsvps = await ctx.db
-      .query("attendees")
-      .withIndex("by_event_and_email", (q) =>
-        q.eq("eventId", args.eventId).eq("email", normalizedEmail),
-      )
-      .collect();
-    const existingRsvp = existingGuestRsvps[0] ?? null;
-
-    if (existingRsvp) {
-      const previousGoing = isGoing(existingRsvp.rsvpStatus);
-      const nextGoing = isGoing(args.rsvpStatus);
-
-      await ctx.db.patch(
-        existingRsvp._id,
-        omitUndefined({
-          name: args.name,
-          email: normalizedEmail,
-          avatar: guestAvatar,
-          rsvpStatus: args.rsvpStatus,
-          plusOne: event.allowPlusOne ? args.plusOne : false,
-          plusOneName: event.allowPlusOne ? args.plusOneName : undefined,
-          dietaryRestrictions: args.dietaryRestrictions,
-          userTokenIdentifier:
-            existingRsvp.userTokenIdentifier ?? guestTokenIdentifier,
-          responseSource: "guest",
-        }),
-      );
-
-      await adjustEventCounter(
-        ctx,
-        args.eventId,
-        "attendeeCount",
-        Number(nextGoing) - Number(previousGoing),
-      );
-
-      return {
-        attendeeId: existingRsvp._id,
-        accessToken: await createAttendeeAccessToken(
-          args.eventId,
-          existingRsvp._id,
-        ),
-      };
     }
 
     const attendeeId = await ctx.db.insert("attendees", {
