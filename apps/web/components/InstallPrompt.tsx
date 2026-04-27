@@ -7,10 +7,13 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
 }
 
+const LOCAL_STORAGE_KEY = "invyte-install-prompt-dismissed";
+
 export default function InstallPrompt() {
   const [isMobile, setIsMobile] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const [isStandalone, setIsStandalone] = useState(false);
+  const [isDismissed, setIsDismissed] = useState(false);
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
 
@@ -25,6 +28,7 @@ export default function InstallPrompt() {
         !(window as { MSStream?: unknown }).MSStream,
     );
     setIsStandalone(window.matchMedia("(display-mode: standalone)").matches);
+    setIsDismissed(localStorage.getItem(LOCAL_STORAGE_KEY) === "true");
 
     const onBeforeInstallPrompt = (event: Event) => {
       event.preventDefault();
@@ -34,6 +38,7 @@ export default function InstallPrompt() {
     const onAppInstalled = () => {
       setIsStandalone(true);
       setDeferredPrompt(null);
+      localStorage.setItem(LOCAL_STORAGE_KEY, "true");
     };
 
     window.addEventListener("beforeinstallprompt", onBeforeInstallPrompt);
@@ -45,7 +50,7 @@ export default function InstallPrompt() {
     };
   }, []);
 
-  if (!isMobile || isStandalone) {
+  if (!isMobile || isStandalone || isDismissed) {
     return null;
   }
 
@@ -55,18 +60,41 @@ export default function InstallPrompt() {
     }
 
     await deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
+    const choice = await deferredPrompt.userChoice;
     setDeferredPrompt(null);
+
+    if (choice.outcome === "accepted" || choice.outcome === "dismissed") {
+      localStorage.setItem(LOCAL_STORAGE_KEY, "true");
+      setIsDismissed(true);
+    }
+  };
+
+  const handleDismiss = () => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, "true");
+    setIsDismissed(true);
   };
 
   return (
     <div className="glass-card rounded-2xl p-4 border border-outline-variant/20 mb-6">
-      <h3 className="font-headline text-base font-bold text-on-surface">
-        Install App
-      </h3>
-      <p className="text-xs text-on-surface-variant mt-1">
-        Add Invyte to your home screen for a faster, app-like experience.
-      </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h3 className="font-headline text-base font-bold text-on-surface">
+            Install App
+          </h3>
+          <p className="text-xs text-on-surface-variant mt-1">
+            Add Invyte to your home screen for a faster, app-like experience.
+          </p>
+        </div>
+
+        <button
+          className="rounded-full p-2 text-on-surface-variant hover:bg-surface-variant/40"
+          onClick={handleDismiss}
+          type="button"
+          aria-label="Dismiss install prompt"
+        >
+          ✕
+        </button>
+      </div>
 
       <button
         className="mt-3 px-4 py-2 rounded-full bg-primary/20 border border-primary/30 text-primary text-xs font-label font-bold uppercase tracking-wider active:scale-95 transition-all"
