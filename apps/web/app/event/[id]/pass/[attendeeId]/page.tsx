@@ -7,6 +7,7 @@ import { useQuery } from "convex/react";
 import { api, type Id } from "@invyte/convex";
 import { jsPDF } from "jspdf";
 import { QRCodeCanvas } from "qrcode.react";
+import { downloadIcsFile } from "@/lib/calendar";
 
 export default function EntryPassPage() {
   const params = useParams<{ id: Id<"events">; attendeeId: Id<"attendees"> }>();
@@ -151,6 +152,21 @@ export default function EntryPassPage() {
     }
   };
 
+  const handleAddToCalendar = () => {
+    const eventUrl =
+      typeof window === "undefined"
+        ? signedEventPath
+        : `${window.location.origin}${signedEventPath}`;
+    downloadIcsFile({
+      id: pass.event._id,
+      title: pass.event.title,
+      date: pass.event.date,
+      time: pass.event.time,
+      location: pass.event.location,
+      url: eventUrl,
+    });
+  };
+
   const handleSendPassEmail = () => {
     if (!pass.attendee.email) {
       return;
@@ -282,9 +298,19 @@ export default function EntryPassPage() {
         <p className="text-center text-[10px] text-outline uppercase tracking-widest mt-6">
           Show this pass at the door
         </p>
-        <div className="grid grid-cols-2 gap-3 mt-4">
+        <button
+          className="btn-primary w-full mt-4 flex items-center justify-center gap-2"
+          onClick={handleAddToCalendar}
+          type="button"
+        >
+          <span className="material-symbols-outlined text-base">
+            calendar_add_on
+          </span>
+          Add to Calendar
+        </button>
+        <div className="grid grid-cols-2 gap-3 mt-3">
           <button
-            className="btn-primary"
+            className="btn-secondary"
             onClick={handleDownloadPdf}
             type="button"
           >
@@ -300,7 +326,7 @@ export default function EntryPassPage() {
           </button>
         </div>
         <button
-          className="btn-secondary w-full mt-4"
+          className="btn-secondary w-full mt-3"
           onClick={() => router.push(signedEventPath)}
           type="button"
         >

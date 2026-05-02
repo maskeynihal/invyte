@@ -10,6 +10,7 @@ import AppShell from "@/components/AppShell";
 import { useMutation, useQuery } from "convex/react";
 import { api, type Id } from "@invyte/convex";
 import { toast } from "@/components/Toaster";
+import { downloadIcsFile } from "@/lib/calendar";
 
 type RsvpStatus = "going" | "maybe" | "not-going" | null;
 
@@ -229,6 +230,24 @@ export default function EventDetailScreen({
       setCopyFeedback(null);
       copyFeedbackTimeoutRef.current = null;
     }, 2200);
+  };
+
+  const handleAddToCalendar = () => {
+    if (!event) return;
+    const success = downloadIcsFile({
+      id: event._id,
+      title: event.title,
+      description: event.description,
+      date: event.date,
+      time: event.time,
+      location: event.location,
+      url: `${window.location.origin}/event/${event._id}`,
+    });
+    if (success) {
+      toast("Calendar file downloaded");
+    } else {
+      toast("Event date is not set yet", "error");
+    }
   };
 
   const handleCopyRsvpLink = async () => {
@@ -603,7 +622,7 @@ export default function EventDetailScreen({
         ) : publicAccess ? (
           <div className="space-y-3">
             {event.currentUserRsvp?.rsvpStatus && !isPublicSaving && (
-              <GlassCard className="p-4">
+              <GlassCard className="p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-[10px] font-label font-bold uppercase tracking-wider text-outline mb-1">
@@ -619,6 +638,18 @@ export default function EventDetailScreen({
                     check_circle
                   </span>
                 </div>
+                {event.currentUserRsvp.rsvpStatus !== "not-going" && (
+                  <button
+                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl border border-secondary/30 bg-secondary/10 text-secondary text-xs font-label font-bold uppercase tracking-wider active:scale-95 transition-all"
+                    onClick={handleAddToCalendar}
+                    type="button"
+                  >
+                    <span className="material-symbols-outlined text-base">
+                      calendar_add_on
+                    </span>
+                    Add to Calendar
+                  </button>
+                )}
               </GlassCard>
             )}
             <p className="text-xs text-on-surface-variant">
@@ -641,8 +672,8 @@ export default function EventDetailScreen({
         ) : (
           <div className="space-y-4">
             {event.currentUserRsvp && !isChangingRsvp ? (
-              <GlassCard className="p-4">
-                <p className="text-[10px] font-label font-bold uppercase tracking-wider text-outline mb-2">
+              <GlassCard className="p-4 space-y-3">
+                <p className="text-[10px] font-label font-bold uppercase tracking-wider text-outline">
                   Your Response
                 </p>
                 <div className="flex items-center justify-between">
@@ -659,6 +690,18 @@ export default function EventDetailScreen({
                     Change
                   </button>
                 </div>
+                {memberRsvpStatus !== "not-going" && (
+                  <button
+                    className="w-full mt-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl border border-secondary/30 bg-secondary/10 text-secondary text-xs font-label font-bold uppercase tracking-wider active:scale-95 transition-all"
+                    onClick={handleAddToCalendar}
+                    type="button"
+                  >
+                    <span className="material-symbols-outlined text-base">
+                      calendar_add_on
+                    </span>
+                    Add to Calendar
+                  </button>
+                )}
               </GlassCard>
             ) : (
               <>
