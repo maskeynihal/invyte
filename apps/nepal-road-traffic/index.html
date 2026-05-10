@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Complete Nepal Road Traffic Guide — Traffic signs, driving rules, light signals, overtaking guide in English and Nepali (नेपाली र अंग्रेजीमा)">
+  <meta name="keywords" content="Nepal traffic signs, Nepal driving rules, Nepal road safety, ट्राफिक चिन्ह, नेपाल यातायात नियम">
+  <meta property="og:title" content="Nepal Road Traffic Guide">
+  <meta property="og:description" content="Complete guide to traffic signs, driving rules & road safety in Nepal — English & Nepali">
+  <title data-i18n="site-title">Nepal Road Traffic Guide</title>
+
+  <!-- Fonts (preconnect for speed) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     NAVBAR
+═══════════════════════════════════════════════════════════ -->
+<nav class="navbar" role="navigation" aria-label="Main navigation">
+  <a href="#home" class="nav-brand">
+    <svg class="nav-flag" viewBox="0 0 28 36" xmlns="http://www.w3.org/2000/svg" aria-label="Nepal Flag">
+      <polygon points="0,0 24,8 0,16" fill="#DC143C" stroke="#003893" stroke-width="2"/>
+      <polygon points="0,16 20,23 0,30" fill="#DC143C" stroke="#003893" stroke-width="2"/>
+    </svg>
+    <span data-i18n="brand">Traffic Guide Nepal</span>
+  </a>
+
+  <ul class="nav-links">
+    <li><a href="#signs" data-i18n="nav-signs">Traffic Signs</a></li>
+    <li><a href="#lights" data-i18n="nav-lights">Light Signals</a></li>
+    <li><a href="#flash" data-i18n="nav-flash">Pass Light</a></li>
+    <li><a href="#indicators" data-i18n="nav-indicators">Indicators</a></li>
+    <li><a href="#overtaking" data-i18n="nav-overtaking">Overtaking</a></li>
+    <li><a href="#rules" data-i18n="nav-rules">Road Rules</a></li>
+    <li><a href="#quiz" data-i18n="nav-quiz">Quiz</a></li>
+  </ul>
+
+  <div class="nav-right">
+    <div class="lang-toggle" role="group" aria-label="Language selector">
+      <button class="lang-btn active" data-lang="en" aria-pressed="true">EN</button>
+      <button class="lang-btn" data-lang="np" aria-pressed="false">NP</button>
+    </div>
+    <button class="hamburger" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" role="dialog" aria-label="Mobile navigation">
+  <button class="mobile-nav-close" aria-label="Close menu">✕</button>
+  <a href="#signs" data-i18n="nav-signs">Traffic Signs</a>
+  <a href="#lights" data-i18n="nav-lights">Light Signals</a>
+  <a href="#flash" data-i18n="nav-flash">Pass Light</a>
+  <a href="#indicators" data-i18n="nav-indicators">Indicators</a>
+  <a href="#overtaking" data-i18n="nav-overtaking">Overtaking</a>
+  <a href="#rules" data-i18n="nav-rules">Road Rules</a>
+  <a href="#quiz" data-i18n="nav-quiz">Quiz</a>
+  <div class="lang-toggle" style="margin-top:1rem;">
+    <button class="lang-btn active" data-lang="en">EN</button>
+    <button class="lang-btn" data-lang="np">NP</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════════════════════ -->
+<section class="hero" id="home">
+  <div class="hero-stars" aria-hidden="true"></div>
+
+  <!-- 3D Road -->
+  <div class="hero-road" aria-hidden="true">
+    <div class="road-3d">
+      <div class="road-edge-left"></div>
+      <div class="road-edge-right"></div>
+      <div class="road-line"></div>
+      <div class="road-line"></div>
+      <div class="road-line"></div>
+      <div class="road-line"></div>
+    </div>
+  </div>
+
+  <!-- Mountains -->
+  <div class="hero-mountains" aria-hidden="true"></div>
+
+  <!-- Content -->
+  <div class="hero-content">
+    <div class="hero-badge" data-i18n="hero-badge">🇳🇵 Official Nepal Road Guide</div>
+    <h1 class="hero-title" data-i18n="hero-title">Navigate Nepal
+Roads Safely</h1>
+    <p class="hero-subtitle" data-i18n="hero-subtitle">Complete guide to traffic signs, driving rules, light signals, overtaking &amp; road safety</p>
+    <div class="hero-cta">
+      <a href="#signs" class="btn btn-primary" data-i18n="hero-cta1">Explore Traffic Signs</a>
+      <a href="#lights" class="btn btn-secondary" data-i18n="hero-cta2">Light Signal Guide</a>
+    </div>
+  </div>
+
+  <div class="hero-scroll" aria-hidden="true">
+    <span data-i18n="hero-scroll">Scroll to explore</span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     STATS BAR
+═══════════════════════════════════════════════════════════ -->
+<div class="stats-bar">
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">◀</div>
+      <div class="stat-label" data-i18n="stat-side-label">Drive on LEFT</div>
+      <div class="stat-sub" data-i18n="stat-side-sub">Left-hand traffic rule</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🏙</div>
+      <div class="stat-label" data-i18n="stat-city-label">40 km/h</div>
+      <div class="stat-sub" data-i18n="stat-city-sub">City speed limit</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🛣</div>
+      <div class="stat-label" data-i18n="stat-highway-label">80 km/h</div>
+      <div class="stat-sub" data-i18n="stat-highway-sub">Highway speed limit</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">▶</div>
+      <div class="stat-label" data-i18n="stat-overtake-label">Overtake RIGHT</div>
+      <div class="stat-sub" data-i18n="stat-overtake-sub">Overtake from right side</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TRAFFIC SIGNS
+═══════════════════════════════════════════════════════════ -->
+<section class="signs-section" id="signs">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Traffic Signs • ट्राफिक चिन्ह</div>
+      <h2 data-i18n="signs-title">Traffic Signs of Nepal</h2>
+      <p data-i18n="signs-subtitle">Learn every traffic sign used on Nepal roads — mandatory, warning &amp; informatory</p>
+    </div>
+
+    <div class="signs-tabs reveal">
+      <button class="tab-btn active" data-cat="all" data-i18n="signs-tab-all">All Signs</button>
+      <button class="tab-btn" data-cat="mandatory" data-i18n="signs-tab-mandatory">Mandatory</button>
+      <button class="tab-btn" data-cat="warning" data-i18n="signs-tab-warning">Warning</button>
+      <button class="tab-btn" data-cat="info" data-i18n="signs-tab-info">Informatory</button>
+    </div>
+
+    <p class="signs-hint reveal"><span>👆</span><span data-i18n="signs-flip-hint">Click any sign to learn more</span></p>
+
+    <div class="signs-grid">
+
+      <!-- ── MANDATORY SIGNS ── -->
+
+      <!-- STOP -->
+      <div class="sign-card" data-cat="mandatory" data-sign="stop">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-mandatory"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <polygon points="30,5 70,5 95,30 95,70 70,95 30,95 5,70 5,30" fill="#DC143C" stroke="#fff" stroke-width="3"/>
+              <polygon points="33,10 67,10 90,33 90,67 67,90 33,90 10,67 10,33" fill="#DC143C"/>
+              <text x="50" y="58" font-family="Arial Black,sans-serif" font-size="24" font-weight="900" fill="white" text-anchor="middle">STOP</text>
+            </svg>
+            <div class="sign-name" data-i18n="sign-stop">STOP</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-stop">STOP</div>
+            <div class="sign-back-desc" data-i18n="sign-stop-desc">Come to a complete halt before the stop line. Proceed only when completely safe.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GIVE WAY -->
+      <div class="sign-card" data-cat="mandatory" data-sign="giveway">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-mandatory"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <polygon points="50,90 8,18 92,18" fill="white" stroke="#DC143C" stroke-width="5"/>
+              <polygon points="50,80 14,24 86,24" fill="#DC143C" opacity="0.15"/>
+              <text x="50" y="60" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#DC143C" text-anchor="middle">GIVE</text>
+              <text x="50" y="72" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#DC143C" text-anchor="middle">WAY</text>
+            </svg>
+            <div class="sign-name" data-i18n="sign-giveway">Give Way</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-giveway">Give Way</div>
+            <div class="sign-back-desc" data-i18n="sign-giveway-desc">Slow down and give priority to vehicles on the main road.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NO ENTRY -->
+      <div class="sign-card" data-cat="mandatory" data-sign="noentry">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-mandatory"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="44" fill="#DC143C"/>
+              <circle cx="50" cy="50" r="40" fill="#DC143C"/>
+              <rect x="15" y="43" width="70" height="14" rx="3" fill="white"/>
+            </svg>
+            <div class="sign-name" data-i18n="sign-noentry">No Entry</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-noentry">No Entry</div>
+            <div class="sign-back-desc" data-i18n="sign-noentry-desc">You are not permitted to enter this road or area.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NO U-TURN -->
+      <div class="sign-card" data-cat="mandatory" data-sign="nouturn">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-mandatory"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="44" fill="white" stroke="#DC143C" stroke-width="5"/>
+              <path d="M35,65 L35,38 Q35,22 55,22 Q75,22 75,38 L75,48 L68,42 L75,48 L82,42" fill="none" stroke="#333" stroke-width="5" stroke-linecap="round"/>
+              <line x1="20" y1="20" x2="80" y2="80" stroke="#DC143C" stroke-width="5" stroke-linecap="round"/>
+            </svg>
+            <div class="sign-name" data-i18n="sign-nouturn">No U-Turn</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-nouturn">No U-Turn</div>
+            <div class="sign-back-desc" data-i18n="sign-nouturn-desc">U-turns are strictly prohibited at this location.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SPEED LIMIT 40 -->
+      <div class="sign-card" data-cat="mandatory" data-sign="speed40">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-mandatory"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="44" fill="white" stroke="#DC143C" stroke-width="6"/>
+              <text x="50" y="62" font-family="Arial Black,sans-serif" font-size="32" font-weight="900" fill="#222" text-anchor="middle">40</text>
+            </svg>
+            <div class="sign-name" data-i18n="sign-speed40">Speed Limit 40</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-speed40">Speed Limit 40</div>
+            <div class="sign-back-desc" data-i18n="sign-speed40-desc">Maximum speed is 40 km/h. Standard in urban areas of Nepal.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SPEED LIMIT 80 -->
+      <div class="sign-card" data-cat="mandatory" data-sign="speed80">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-mandatory"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="44" fill="white" stroke="#DC143C" stroke-width="6"/>
+              <text x="50" y="62" font-family="Arial Black,sans-serif" font-size="32" font-weight="900" fill="#222" text-anchor="middle">80</text>
+            </svg>
+            <div class="sign-name" data-i18n="sign-speed80">Speed Limit 80</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-speed80">Speed Limit 80</div>
+            <div class="sign-back-desc" data-i18n="sign-speed80-desc">Maximum speed is 80 km/h. Applied on highways in Nepal.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NO OVERTAKING -->
+      <div class="sign-card" data-cat="mandatory" data-sign="noovertake">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-mandatory"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="44" fill="white" stroke="#DC143C" stroke-width="5"/>
+              <rect x="20" y="42" width="26" height="18" rx="4" fill="#333"/>
+              <rect x="54" y="38" width="26" height="18" rx="4" fill="#DC143C"/>
+              <circle cx="33" cy="42" r="5" fill="#555"/>
+              <circle cx="67" cy="38" r="5" fill="#c00"/>
+            </svg>
+            <div class="sign-name" data-i18n="sign-noovertake">No Overtaking</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-noovertake">No Overtaking</div>
+            <div class="sign-back-desc" data-i18n="sign-noovertake-desc">Overtaking is strictly prohibited on this road section.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NO HORN -->
+      <div class="sign-card" data-cat="mandatory" data-sign="nohorn">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-mandatory"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="44" fill="white" stroke="#DC143C" stroke-width="5"/>
+              <path d="M30,42 L30,58 L42,58 L58,70 L58,30 L42,42 Z" fill="#555"/>
+              <path d="M64,38 Q72,50 64,62" fill="none" stroke="#555" stroke-width="4" stroke-linecap="round"/>
+              <line x1="22" y1="22" x2="78" y2="78" stroke="#DC143C" stroke-width="5" stroke-linecap="round"/>
+            </svg>
+            <div class="sign-name" data-i18n="sign-nohorn">No Horn</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-nohorn">No Horn</div>
+            <div class="sign-back-desc" data-i18n="sign-nohorn-desc">Sounding the horn is prohibited. Common near hospitals and schools.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NO PARKING -->
+      <div class="sign-card" data-cat="mandatory" data-sign="noparking">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-mandatory"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="44" fill="#003893"/>
+              <text x="50" y="62" font-family="Arial Black,sans-serif" font-size="40" font-weight="900" fill="white" text-anchor="middle">P</text>
+              <line x1="22" y1="22" x2="78" y2="78" stroke="#DC143C" stroke-width="5" stroke-linecap="round"/>
+            </svg>
+            <div class="sign-name" data-i18n="sign-noparking">No Parking</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-noparking">No Parking</div>
+            <div class="sign-back-desc" data-i18n="sign-noparking-desc">Parking is not allowed here. Your vehicle may be towed.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KEEP LEFT -->
+      <div class="sign-card" data-cat="mandatory" data-sign="keepleft">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-mandatory"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="44" fill="#003893"/>
+              <path d="M60,30 L60,55 Q60,70 45,70 L38,70" fill="none" stroke="white" stroke-width="7" stroke-linecap="round"/>
+              <polygon points="32,60 32,80 52,70" fill="white"/>
+            </svg>
+            <div class="sign-name" data-i18n="sign-keepleft">Keep Left</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-keepleft">Keep Left</div>
+            <div class="sign-back-desc" data-i18n="sign-keepleft-desc">You must stay to the left side of this obstruction or divider.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ONE WAY -->
+      <div class="sign-card" data-cat="mandatory" data-sign="oneway">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-mandatory"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <rect x="8" y="35" width="84" height="30" rx="5" fill="#003893"/>
+              <polygon points="55,25 85,50 55,75" fill="white"/>
+              <rect x="20" y="44" width="40" height="12" rx="2" fill="white"/>
+            </svg>
+            <div class="sign-name" data-i18n="sign-oneway">One Way →</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-oneway">One Way →</div>
+            <div class="sign-back-desc" data-i18n="sign-oneway-desc">Traffic flows in one direction only. Never drive against the arrow.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NO LEFT TURN -->
+      <div class="sign-card" data-cat="mandatory" data-sign="noleftturn">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-mandatory"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="44" fill="white" stroke="#DC143C" stroke-width="5"/>
+              <path d="M65,30 L65,55 Q65,68 52,68 L42,68" fill="none" stroke="#333" stroke-width="5" stroke-linecap="round"/>
+              <polygon points="35,60 35,76 51,68" fill="#333"/>
+              <line x1="22" y1="22" x2="78" y2="78" stroke="#DC143C" stroke-width="5" stroke-linecap="round"/>
+            </svg>
+            <div class="sign-name" data-i18n="sign-noleftturn">No Left Turn</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-noleftturn">No Left Turn</div>
+            <div class="sign-back-desc" data-i18n="sign-noleftturn-desc">Turning left at this junction is prohibited.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── WARNING SIGNS ── -->
+
+      <!-- BEND LEFT -->
+      <div class="sign-card" data-cat="warning" data-sign="bendleft">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-warning"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <polygon points="50,8 92,82 8,82" fill="#FFCC00" stroke="#DC143C" stroke-width="4"/>
+              <path d="M55,62 Q55,35 40,35 Q28,35 28,48" fill="none" stroke="#333" stroke-width="5" stroke-linecap="round"/>
+              <polygon points="20,44 28,60 36,44" fill="#333"/>
+            </svg>
+            <div class="sign-name" data-i18n="sign-bendleft">Bend Left</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-bendleft">Bend Left</div>
+            <div class="sign-back-desc" data-i18n="sign-bendleft-desc">Sharp left curve ahead. Reduce speed well in advance.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BEND RIGHT -->
+      <div class="sign-card" data-cat="warning" data-sign="bendright">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-warning"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <polygon points="50,8 92,82 8,82" fill="#FFCC00" stroke="#DC143C" stroke-width="4"/>
+              <path d="M45,62 Q45,35 60,35 Q72,35 72,48" fill="none" stroke="#333" stroke-width="5" stroke-linecap="round"/>
+              <polygon points="80,44 72,60 64,44" fill="#333"/>
+            </svg>
+            <div class="sign-name" data-i18n="sign-bendright">Bend Right</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-bendright">Bend Right</div>
+            <div class="sign-back-desc" data-i18n="sign-bendright-desc">Sharp right curve ahead. Reduce speed significantly.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCHOOL -->
+      <div class="sign-card" data-cat="warning" data-sign="school">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-warning"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <polygon points="50,8 92,82 8,82" fill="#FFCC00" stroke="#DC143C" stroke-width="4"/>
+              <circle cx="38" cy="44" r="6" fill="#333"/>
+              <line x1="38" y1="50" x2="38" y2="65" stroke="#333" stroke-width="4" stroke-linecap="round"/>
+              <line x1="28" y1="58" x2="48" y2="58" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+              <line x1="38" y1="65" x2="30" y2="75" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+              <line x1="38" y1="65" x2="46" y2="75" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+              <circle cx="62" cy="44" r="6" fill="#333"/>
+              <line x1="62" y1="50" x2="62" y2="65" stroke="#333" stroke-width="4" stroke-linecap="round"/>
+              <line x1="52" y1="58" x2="72" y2="58" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+              <line x1="62" y1="65" x2="54" y2="75" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+              <line x1="62" y1="65" x2="70" y2="75" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            <div class="sign-name" data-i18n="sign-school">School Zone</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-school">School Zone</div>
+            <div class="sign-back-desc" data-i18n="sign-school-desc">Children may be crossing. Reduce speed to 20-30 km/h.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PEDESTRIAN -->
+      <div class="sign-card" data-cat="warning" data-sign="pedestrian">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-warning"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <polygon points="50,8 92,82 8,82" fill="#FFCC00" stroke="#DC143C" stroke-width="4"/>
+              <circle cx="50" cy="38" r="7" fill="#333"/>
+              <line x1="50" y1="45" x2="50" y2="62" stroke="#333" stroke-width="5" stroke-linecap="round"/>
+              <line x1="36" y1="54" x2="64" y2="54" stroke="#333" stroke-width="4" stroke-linecap="round"/>
+              <line x1="50" y1="62" x2="40" y2="76" stroke="#333" stroke-width="4" stroke-linecap="round"/>
+              <line x1="50" y1="62" x2="60" y2="76" stroke="#333" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+            <div class="sign-name" data-i18n="sign-pedestrian">Pedestrian Crossing</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-pedestrian">Pedestrian Crossing</div>
+            <div class="sign-back-desc" data-i18n="sign-pedestrian-desc">Give way to pedestrians on the crossing. Legal requirement.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROAD WORKS -->
+      <div class="sign-card" data-cat="warning" data-sign="roadworks">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-warning"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <polygon points="50,8 92,82 8,82" fill="#FFCC00" stroke="#DC143C" stroke-width="4"/>
+              <rect x="44" y="34" width="12" height="30" rx="2" fill="#333" transform="rotate(-30,50,50)"/>
+              <rect x="44" y="34" width="12" height="8" rx="2" fill="#DC143C" transform="rotate(-30,50,50)"/>
+              <circle cx="52" cy="40" r="8" fill="#555"/>
+              <line x1="30" y1="74" x2="70" y2="74" stroke="#DC143C" stroke-width="5" stroke-linecap="round"/>
+            </svg>
+            <div class="sign-name" data-i18n="sign-roadworks">Road Works</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-roadworks">Road Works</div>
+            <div class="sign-back-desc" data-i18n="sign-roadworks-desc">Construction work underway. Follow temporary signs, reduce speed.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RAILWAY -->
+      <div class="sign-card" data-cat="warning" data-sign="railway">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-warning"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <polygon points="50,8 92,82 8,82" fill="#FFCC00" stroke="#DC143C" stroke-width="4"/>
+              <text x="50" y="72" font-family="Arial,sans-serif" font-size="36" font-weight="900" fill="#333" text-anchor="middle">☷</text>
+              <line x1="30" y1="48" x2="70" y2="48" stroke="#333" stroke-width="4"/>
+              <line x1="30" y1="58" x2="70" y2="58" stroke="#333" stroke-width="4"/>
+              <line x1="35" y1="38" x2="35" y2="68" stroke="#333" stroke-width="3"/>
+              <line x1="50" y1="38" x2="50" y2="68" stroke="#333" stroke-width="3"/>
+              <line x1="65" y1="38" x2="65" y2="68" stroke="#333" stroke-width="3"/>
+            </svg>
+            <div class="sign-name" data-i18n="sign-railway">Railway Crossing</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-railway">Railway Crossing</div>
+            <div class="sign-back-desc" data-i18n="sign-railway-desc">Stop and check for trains before crossing. Never rush.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEEP UP -->
+      <div class="sign-card" data-cat="warning" data-sign="steepup">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-warning"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <polygon points="50,8 92,82 8,82" fill="#FFCC00" stroke="#DC143C" stroke-width="4"/>
+              <path d="M25,72 L70,35" stroke="#333" stroke-width="6" stroke-linecap="round"/>
+              <polygon points="68,25 80,42 56,38" fill="#333"/>
+              <text x="50" y="82" font-family="Arial,sans-serif" font-size="9" font-weight="700" fill="#555" text-anchor="middle">14%</text>
+            </svg>
+            <div class="sign-name" data-i18n="sign-steepup">Steep Ascent</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-steepup">Steep Ascent</div>
+            <div class="sign-back-desc" data-i18n="sign-steepup-desc">Steep uphill ahead. Use lower gear. Uphill vehicles have right of way.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEEP DOWN -->
+      <div class="sign-card" data-cat="warning" data-sign="steepdown">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-warning"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <polygon points="50,8 92,82 8,82" fill="#FFCC00" stroke="#DC143C" stroke-width="4"/>
+              <path d="M30,38 L75,72" stroke="#333" stroke-width="6" stroke-linecap="round"/>
+              <polygon points="78,62 65,78 58,56" fill="#333"/>
+              <text x="50" y="82" font-family="Arial,sans-serif" font-size="9" font-weight="700" fill="#555" text-anchor="middle">14%</text>
+            </svg>
+            <div class="sign-name" data-i18n="sign-steepdown">Steep Descent</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-steepdown">Steep Descent</div>
+            <div class="sign-back-desc" data-i18n="sign-steepdown-desc">Steep downhill ahead. Use engine braking. Avoid riding brakes.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NARROW ROAD -->
+      <div class="sign-card" data-cat="warning" data-sign="narrow">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-warning"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <polygon points="50,8 92,82 8,82" fill="#FFCC00" stroke="#DC143C" stroke-width="4"/>
+              <line x1="30" y1="38" x2="45" y2="72" stroke="#333" stroke-width="4" stroke-linecap="round"/>
+              <line x1="70" y1="38" x2="55" y2="72" stroke="#333" stroke-width="4" stroke-linecap="round"/>
+              <rect x="44" y="52" width="12" height="22" rx="2" fill="#555"/>
+            </svg>
+            <div class="sign-name" data-i18n="sign-narrow">Narrow Road</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-narrow">Narrow Road</div>
+            <div class="sign-back-desc" data-i18n="sign-narrow-desc">Road narrows ahead. Reduce speed, be ready to give way.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIPPERY -->
+      <div class="sign-card" data-cat="warning" data-sign="slippery">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-warning"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <polygon points="50,8 92,82 8,82" fill="#FFCC00" stroke="#DC143C" stroke-width="4"/>
+              <rect x="30" y="55" width="40" height="12" rx="2" fill="#555" transform="rotate(-8,50,61)"/>
+              <rect x="36" y="42" width="28" height="14" rx="4" fill="#444" transform="rotate(-8,50,49)"/>
+              <path d="M25,75 Q40,70 55,75 Q70,80 80,74" fill="none" stroke="#888" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            <div class="sign-name" data-i18n="sign-slippery">Slippery Road</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-slippery">Slippery Road</div>
+            <div class="sign-back-desc" data-i18n="sign-slippery-desc">Road may be slippery especially in rain. Reduce speed.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FALLING ROCKS -->
+      <div class="sign-card" data-cat="warning" data-sign="rocks">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-warning"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <polygon points="50,8 92,82 8,82" fill="#FFCC00" stroke="#DC143C" stroke-width="4"/>
+              <line x1="38" y1="35" x2="48" y2="75" stroke="#555" stroke-width="3" stroke-linecap="round"/>
+              <circle cx="32" cy="42" r="8" fill="#555"/>
+              <circle cx="44" cy="56" r="5" fill="#666"/>
+              <circle cx="56" cy="48" r="7" fill="#555"/>
+              <circle cx="66" cy="62" r="4" fill="#666"/>
+            </svg>
+            <div class="sign-name" data-i18n="sign-rocks">Falling Rocks</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-rocks">Falling Rocks</div>
+            <div class="sign-back-desc" data-i18n="sign-rocks-desc">Risk of rocks falling from hillside. Drive quickly, do not stop.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- T-JUNCTION -->
+      <div class="sign-card" data-cat="warning" data-sign="tjunction">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-warning"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <polygon points="50,8 92,82 8,82" fill="#FFCC00" stroke="#DC143C" stroke-width="4"/>
+              <line x1="25" y1="56" x2="75" y2="56" stroke="#333" stroke-width="6" stroke-linecap="round"/>
+              <line x1="50" y1="56" x2="50" y2="76" stroke="#333" stroke-width="6" stroke-linecap="round"/>
+            </svg>
+            <div class="sign-name" data-i18n="sign-tjunction">T-Junction</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-tjunction">T-Junction</div>
+            <div class="sign-back-desc" data-i18n="sign-tjunction-desc">T-shaped junction ahead. Give way if on the minor road.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── INFORMATORY SIGNS ── -->
+
+      <!-- HOSPITAL -->
+      <div class="sign-card" data-cat="info" data-sign="hospital">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-info"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <rect x="10" y="10" width="80" height="80" rx="8" fill="#003893"/>
+              <rect x="44" y="28" width="12" height="44" rx="2" fill="white"/>
+              <rect x="28" y="44" width="44" height="12" rx="2" fill="white"/>
+            </svg>
+            <div class="sign-name" data-i18n="sign-hospital">Hospital</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-hospital">Hospital</div>
+            <div class="sign-back-desc" data-i18n="sign-hospital-desc">Hospital nearby. Silent zone — no horns. Drive slowly.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PARKING INFO -->
+      <div class="sign-card" data-cat="info" data-sign="parking-info">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-info"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <rect x="10" y="10" width="80" height="80" rx="8" fill="#003893"/>
+              <text x="50" y="68" font-family="Arial Black,sans-serif" font-size="50" font-weight="900" fill="white" text-anchor="middle">P</text>
+            </svg>
+            <div class="sign-name" data-i18n="sign-parking-info">Parking Area</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-parking-info">Parking Area</div>
+            <div class="sign-back-desc" data-i18n="sign-parking-info-desc">Designated parking area available ahead. Safe to park here.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PETROL -->
+      <div class="sign-card" data-cat="info" data-sign="petrol">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-info"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <rect x="10" y="10" width="80" height="80" rx="8" fill="#003893"/>
+              <rect x="30" y="28" width="30" height="44" rx="3" fill="white" opacity="0.9"/>
+              <rect x="32" y="30" width="26" height="16" rx="2" fill="#4a9eff"/>
+              <line x1="60" y1="36" x2="72" y2="28" stroke="white" stroke-width="3" stroke-linecap="round"/>
+              <circle cx="72" cy="26" r="5" fill="white"/>
+              <text x="50" y="83" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="white" text-anchor="middle">FUEL</text>
+            </svg>
+            <div class="sign-name" data-i18n="sign-petrol">Petrol Station</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-petrol">Petrol Station</div>
+            <div class="sign-back-desc" data-i18n="sign-petrol-desc">Fuel station available ahead. Plan fuel stop here.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FIRST AID -->
+      <div class="sign-card" data-cat="info" data-sign="firstaid">
+        <div class="sign-card-inner">
+          <div class="sign-front">
+            <div class="sign-category-badge badge-info"></div>
+            <svg class="sign-svg" viewBox="0 0 100 100">
+              <rect x="10" y="10" width="80" height="80" rx="8" fill="white" stroke="#DC143C" stroke-width="3"/>
+              <rect x="44" y="28" width="12" height="44" rx="2" fill="#DC143C"/>
+              <rect x="28" y="44" width="44" height="12" rx="2" fill="#DC143C"/>
+            </svg>
+            <div class="sign-name" data-i18n="sign-firstaid">First Aid</div>
+          </div>
+          <div class="sign-back">
+            <div class="sign-name" data-i18n="sign-firstaid">First Aid</div>
+            <div class="sign-back-desc" data-i18n="sign-firstaid-desc">Medical first aid available ahead. Go here in emergencies.</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /signs-grid -->
+  </div><!-- /container -->
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     LIGHT SIGNALS
+═══════════════════════════════════════════════════════════ -->
+<section class="lights-section" id="lights">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Light Signals • बत्ती संकेत</div>
+      <h2 data-i18n="lights-title">Vehicle Light Signals</h2>
+      <p data-i18n="lights-subtitle">Know exactly when and how to use every light on your vehicle while driving in Nepal</p>
+    </div>
+
+    <div class="lights-inner">
+
+      <!-- Left: Car diagram -->
+      <div class="car-diagram-wrap reveal">
+        <div class="view-toggle">
+          <button class="view-btn active" data-view="front" data-i18n="lights-front">Front View</button>
+          <button class="view-btn" data-view="rear" data-i18n="lights-rear">Rear View</button>
+        </div>
+
+        <p class="car-instruction" data-i18n="lights-click">Click any light on the car to learn about it</p>
+
+        <div class="car-svg-container">
+
+          <!-- FRONT VIEW -->
+          <div class="car-view active" data-view="front">
+            <svg class="car-svg" viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg">
+              <!-- Car body -->
+              <rect x="40" y="120" width="280" height="100" rx="16" fill="#2d3748"/>
+              <!-- Cabin -->
+              <path d="M80,120 L100,55 L260,55 L280,120 Z" fill="#253045"/>
+              <!-- Windshield -->
+              <path d="M90,118 L108,62 L252,62 L270,118 Z" fill="#1a4a7a" opacity="0.5" rx="4"/>
+              <!-- Windshield glare -->
+              <path d="M100,100 L115,68 L160,68 L150,100 Z" fill="white" opacity="0.04"/>
+              <!-- Grille -->
+              <rect x="100" y="170" width="160" height="22" rx="6" fill="#1a1a2e"/>
+              <line x1="120" y1="174" x2="120" y2="188" stroke="#333" stroke-width="2"/>
+              <line x1="140" y1="174" x2="140" y2="188" stroke="#333" stroke-width="2"/>
+              <line x1="160" y1="174" x2="160" y2="188" stroke="#333" stroke-width="2"/>
+              <line x1="180" y1="174" x2="180" y2="188" stroke="#333" stroke-width="2"/>
+              <line x1="200" y1="174" x2="200" y2="188" stroke="#333" stroke-width="2"/>
+              <line x1="220" y1="174" x2="220" y2="188" stroke="#333" stroke-width="2"/>
+              <line x1="240" y1="174" x2="240" y2="188" stroke="#333" stroke-width="2"/>
+              <!-- Number plate -->
+              <rect x="130" y="196" width="100" height="18" rx="3" fill="#f5f5f5"/>
+              <text x="180" y="209" font-family="Arial,sans-serif" font-size="9" fill="#333" text-anchor="middle" font-weight="700">BA 1 PA 2345</text>
+              <!-- Wheels -->
+              <circle cx="90" cy="220" r="18" fill="#1a1a2e" stroke="#555" stroke-width="3"/>
+              <circle cx="90" cy="220" r="8" fill="#333"/>
+              <circle cx="270" cy="220" r="18" fill="#1a1a2e" stroke="#555" stroke-width="3"/>
+              <circle cx="270" cy="220" r="8" fill="#333"/>
+
+              <!-- LEFT HEADLIGHT (lowbeam/highbeam) -->
+              <g class="light-group" data-light="lowbeam" role="button" tabindex="0" aria-label="Low beam headlight">
+                <ellipse cx="88" cy="148" rx="36" ry="22" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/>
+                <ellipse cx="88" cy="148" rx="28" ry="16" fill="#2a2a3e"/>
+                <ellipse cx="88" cy="148" rx="20" ry="11" fill="#f5e642" opacity="0.25"/>
+                <ellipse cx="88" cy="148" rx="12" ry="7" fill="#fffde0" opacity="0.4"/>
+                <!-- DRL strip -->
+                <rect x="54" y="138" width="68" height="4" rx="2" fill="#f5e642" opacity="0.3"/>
+              </g>
+
+              <!-- RIGHT HEADLIGHT (mirrored) -->
+              <g class="light-group" data-light="lowbeam" role="button" tabindex="0" aria-label="Low beam headlight right">
+                <ellipse cx="272" cy="148" rx="36" ry="22" fill="#1a1a2e" stroke="#444" stroke-width="1.5"/>
+                <ellipse cx="272" cy="148" rx="28" ry="16" fill="#2a2a3e"/>
+                <ellipse cx="272" cy="148" rx="20" ry="11" fill="#f5e642" opacity="0.25"/>
+                <ellipse cx="272" cy="148" rx="12" ry="7" fill="#fffde0" opacity="0.4"/>
+                <rect x="238" y="138" width="68" height="4" rx="2" fill="#f5e642" opacity="0.3"/>
+              </g>
+
+              <!-- HIGH BEAM indicator -->
+              <g class="light-group" data-light="highbeam" role="button" tabindex="0" aria-label="High beam indicator">
+                <rect x="160" y="170" width="40" height="6" rx="2" fill="#4a9eff" opacity="0.6"/>
+              </g>
+
+              <!-- LEFT INDICATOR (front) -->
+              <g class="light-group" data-light="leftind" role="button" tabindex="0" aria-label="Left indicator front">
+                <rect x="42" y="138" width="24" height="32" rx="5" fill="#ff8c00" opacity="0.5" stroke="#cc7000" stroke-width="1"/>
+                <rect x="46" y="142" width="16" height="24" rx="3" fill="#ff8c00" opacity="0.3"/>
+              </g>
+
+              <!-- RIGHT INDICATOR (front) -->
+              <g class="light-group" data-light="rightind" role="button" tabindex="0" aria-label="Right indicator front">
+                <rect x="294" y="138" width="24" height="32" rx="5" fill="#ff8c00" opacity="0.5" stroke="#cc7000" stroke-width="1"/>
+                <rect x="298" y="142" width="16" height="24" rx="3" fill="#ff8c00" opacity="0.3"/>
+              </g>
+
+              <!-- HAZARD (click area at bottom) -->
+              <g class="light-group" data-light="hazard" role="button" tabindex="0" aria-label="Hazard lights">
+                <rect x="152" y="213" width="56" height="12" rx="3" fill="#ff8c00" opacity="0.2" stroke="#ff8c00" stroke-width="1" stroke-dasharray="4,2"/>
+                <text x="180" y="222" font-family="Arial,sans-serif" font-size="7" fill="#ff8c00" text-anchor="middle">HAZARD</text>
+              </g>
+
+              <!-- Labels -->
+              <text x="88" y="235" font-family="Arial,sans-serif" font-size="8" fill="#888" text-anchor="middle">Headlights</text>
+              <text x="54" y="235" font-family="Arial,sans-serif" font-size="7" fill="#888" text-anchor="middle">Indicator</text>
+              <text x="306" y="235" font-family="Arial,sans-serif" font-size="7" fill="#888" text-anchor="middle">Indicator</text>
+              <text x="272" y="235" font-family="Arial,sans-serif" font-size="8" fill="#888" text-anchor="middle">Headlights</text>
+            </svg>
+          </div>
+
+          <!-- REAR VIEW -->
+          <div class="car-view" data-view="rear">
+            <svg class="car-svg" viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg">
+              <!-- Car body rear -->
+              <rect x="40" y="110" width="280" height="112" rx="16" fill="#2d3748"/>
+              <!-- Cabin rear -->
+              <path d="M80,110 L100,50 L260,50 L280,110 Z" fill="#253045"/>
+              <!-- Rear window -->
+              <path d="M95,108 L110,58 L250,58 L265,108 Z" fill="#1a3a5a" opacity="0.5"/>
+              <!-- Boot -->
+              <rect x="50" y="160" width="260" height="10" rx="2" fill="#232b3a"/>
+              <!-- Number plate -->
+              <rect x="130" y="196" width="100" height="18" rx="3" fill="#f5f5f5"/>
+              <text x="180" y="209" font-family="Arial,sans-serif" font-size="9" fill="#333" text-anchor="middle" font-weight="700">BA 1 PA 2345</text>
+              <!-- Wheels -->
+              <circle cx="90" cy="220" r="18" fill="#1a1a2e" stroke="#555" stroke-width="3"/>
+              <circle cx="90" cy="220" r="8" fill="#333"/>
+              <circle cx="270" cy="220" r="18" fill="#1a1a2e" stroke="#555" stroke-width="3"/>
+              <circle cx="270" cy="220" r="8" fill="#333"/>
+
+              <!-- LEFT TAIL LIGHT -->
+              <g class="light-group" data-light="tail" role="button" tabindex="0" aria-label="Left tail light">
+                <path d="M42,120 L42,170 L80,170 L80,120 Z" fill="#8b0000" opacity="0.7" rx="4"/>
+                <path d="M46,124 L46,166 L76,166 L76,124 Z" fill="#cc0000" opacity="0.5"/>
+              </g>
+
+              <!-- RIGHT TAIL LIGHT -->
+              <g class="light-group" data-light="tail" role="button" tabindex="0" aria-label="Right tail light">
+                <path d="M318,120 L318,170 L280,170 L280,120 Z" fill="#8b0000" opacity="0.7"/>
+                <path d="M314,124 L314,166 L284,166 L284,124 Z" fill="#cc0000" opacity="0.5"/>
+              </g>
+
+              <!-- LEFT BRAKE LIGHT -->
+              <g class="light-group" data-light="brake" role="button" tabindex="0" aria-label="Left brake light">
+                <rect x="46" y="126" width="28" height="20" rx="3" fill="#ff2222" opacity="0.6"/>
+              </g>
+
+              <!-- RIGHT BRAKE LIGHT -->
+              <g class="light-group" data-light="brake" role="button" tabindex="0" aria-label="Right brake light">
+                <rect x="286" y="126" width="28" height="20" rx="3" fill="#ff2222" opacity="0.6"/>
+              </g>
+
+              <!-- LEFT REAR INDICATOR -->
+              <g class="light-group" data-light="leftind" role="button" tabindex="0" aria-label="Left rear indicator">
+                <rect x="46" y="150" width="28" height="16" rx="3" fill="#ff8c00" opacity="0.6"/>
+              </g>
+
+              <!-- RIGHT REAR INDICATOR -->
+              <g class="light-group" data-light="rightind" role="button" tabindex="0" aria-label="Right rear indicator">
+                <rect x="286" y="150" width="28" height="16" rx="3" fill="#ff8c00" opacity="0.6"/>
+              </g>
+
+              <!-- REVERSE LIGHTS (white) -->
+              <g class="light-group" data-light="reverse" role="button" tabindex="0" aria-label="Reverse lights">
+                <rect x="148" y="168" width="30" height="20" rx="4" fill="white" opacity="0.6"/>
+                <rect x="182" y="168" width="30" height="20" rx="4" fill="white" opacity="0.6"/>
+              </g>
+
+              <!-- PARKING LIGHTS indicator -->
+              <g class="light-group" data-light="parking" role="button" tabindex="0" aria-label="Parking lights">
+                <rect x="62" y="170" width="16" height="10" rx="2" fill="#ff8c00" opacity="0.3" stroke="#ff8c00" stroke-width="1" stroke-dasharray="3,1"/>
+                <rect x="282" y="170" width="16" height="10" rx="2" fill="#ff8c00" opacity="0.3" stroke="#ff8c00" stroke-width="1" stroke-dasharray="3,1"/>
+              </g>
+
+              <!-- Labels -->
+              <text x="60" y="238" font-family="Arial,sans-serif" font-size="7" fill="#888" text-anchor="middle">Tail/Brake</text>
+              <text x="300" y="238" font-family="Arial,sans-serif" font-size="7" fill="#888" text-anchor="middle">Tail/Brake</text>
+              <text x="180" y="238" font-family="Arial,sans-serif" font-size="7" fill="#888" text-anchor="middle">Reverse (White)</text>
+            </svg>
+          </div>
+
+        </div><!-- /car-svg-container -->
+      </div><!-- /car-diagram-wrap -->
+
+      <!-- Right: Info panel -->
+      <div class="light-info-panel reveal">
+        <div class="light-info-default active">
+          <div class="light-icon">🚗</div>
+          <h3 data-i18n="lights-select-prompt">Select a light above</h3>
+          <p data-i18n="lights-select-sub">Click on any highlighted light on the car diagram to see what it means and when to use it.</p>
+        </div>
+
+        <!-- Low Beam -->
+        <div class="light-info-content" data-light="lowbeam">
+          <div class="light-info-icon">💡</div>
+          <div class="light-info-name" data-i18n="light-lowbeam-name">Low Beam Headlights</div>
+          <div class="light-info-when" data-i18n="light-lowbeam-when">When to use</div>
+          <p class="light-info-desc" data-i18n="light-lowbeam-desc">Night driving in urban areas...</p>
+          <div class="light-info-tip"><span class="tip-icon">💡</span><span data-i18n="light-lowbeam-tip"></span></div>
+        </div>
+
+        <!-- High Beam -->
+        <div class="light-info-content" data-light="highbeam">
+          <div class="light-info-icon">🔆</div>
+          <div class="light-info-name" data-i18n="light-highbeam-name">High Beam Headlights</div>
+          <div class="light-info-when" data-i18n="light-highbeam-when">When to use</div>
+          <p class="light-info-desc" data-i18n="light-highbeam-desc">On dark highways...</p>
+          <div class="light-info-tip"><span class="tip-icon">💡</span><span data-i18n="light-highbeam-tip"></span></div>
+        </div>
+
+        <!-- Left Indicator -->
+        <div class="light-info-content" data-light="leftind">
+          <div class="light-info-icon">◀️</div>
+          <div class="light-info-name" data-i18n="light-leftind-name">Left Indicator</div>
+          <div class="light-info-when" data-i18n="light-leftind-when">When to use</div>
+          <p class="light-info-desc" data-i18n="light-leftind-desc">Turning left...</p>
+          <div class="light-info-tip"><span class="tip-icon">💡</span><span data-i18n="light-leftind-tip"></span></div>
+        </div>
+
+        <!-- Right Indicator -->
+        <div class="light-info-content" data-light="rightind">
+          <div class="light-info-icon">▶️</div>
+          <div class="light-info-name" data-i18n="light-rightind-name">Right Indicator</div>
+          <div class="light-info-when" data-i18n="light-rightind-when">When to use</div>
+          <p class="light-info-desc" data-i18n="light-rightind-desc">Turning right...</p>
+          <div class="light-info-tip"><span class="tip-icon">💡</span><span data-i18n="light-rightind-tip"></span></div>
+        </div>
+
+        <!-- Hazard -->
+        <div class="light-info-content" data-light="hazard">
+          <div class="light-info-icon">⚠️</div>
+          <div class="light-info-name" data-i18n="light-hazard-name">Hazard Lights</div>
+          <div class="light-info-when" data-i18n="light-hazard-when">When to use</div>
+          <p class="light-info-desc" data-i18n="light-hazard-desc">Vehicle breakdown...</p>
+          <div class="light-info-tip"><span class="tip-icon">💡</span><span data-i18n="light-hazard-tip"></span></div>
+        </div>
+
+        <!-- Brake -->
+        <div class="light-info-content" data-light="brake">
+          <div class="light-info-icon">🔴</div>
+          <div class="light-info-name" data-i18n="light-brake-name">Brake Lights</div>
+          <div class="light-info-when" data-i18n="light-brake-when">When active</div>
+          <p class="light-info-desc" data-i18n="light-brake-desc">Automatically activated...</p>
+          <div class="light-info-tip"><span class="tip-icon">💡</span><span data-i18n="light-brake-tip"></span></div>
+        </div>
+
+        <!-- Reverse -->
+        <div class="light-info-content" data-light="reverse">
+          <div class="light-info-icon">⬜</div>
+          <div class="light-info-name" data-i18n="light-reverse-name">Reverse Lights</div>
+          <div class="light-info-when" data-i18n="light-reverse-when">When active</div>
+          <p class="light-info-desc" data-i18n="light-reverse-desc">Automatically turns on...</p>
+          <div class="light-info-tip"><span class="tip-icon">💡</span><span data-i18n="light-reverse-tip"></span></div>
+        </div>
+
+        <!-- Tail -->
+        <div class="light-info-content" data-light="tail">
+          <div class="light-info-icon">🔴</div>
+          <div class="light-info-name" data-i18n="light-tail-name">Tail Lights</div>
+          <div class="light-info-when" data-i18n="light-tail-when">When active</div>
+          <p class="light-info-desc" data-i18n="light-tail-desc">Red rear lights...</p>
+          <div class="light-info-tip"><span class="tip-icon">💡</span><span data-i18n="light-tail-tip"></span></div>
+        </div>
+
+        <!-- Parking -->
+        <div class="light-info-content" data-light="parking">
+          <div class="light-info-icon">🅿️</div>
+          <div class="light-info-name" data-i18n="light-parking-name">Parking Lights</div>
+          <div class="light-info-when" data-i18n="light-parking-when">When to use</div>
+          <p class="light-info-desc" data-i18n="light-parking-desc">When parked in poorly lit areas...</p>
+          <div class="light-info-tip"><span class="tip-icon">💡</span><span data-i18n="light-parking-tip"></span></div>
+        </div>
+
+      </div><!-- /light-info-panel -->
+    </div><!-- /lights-inner -->
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     FLASH / PASS LIGHT SECTION
+═══════════════════════════════════════════════════════════ -->
+<section class="flash-section" id="flash">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Pass Light • पास लाइट</div>
+      <h2 data-i18n="flash-title">Flash / Pass Light Signals</h2>
+      <p data-i18n="flash-subtitle">Headlight flashing is a critical communication method on Nepal's roads</p>
+    </div>
+    <div class="flash-grid">
+      <!-- Rendered by JS: renderFlashCards() -->
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     INDICATORS GUIDE
+═══════════════════════════════════════════════════════════ -->
+<section class="indicators-section" id="indicators">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Indicators • इन्डिकेटर</div>
+      <h2 data-i18n="indicators-title">Complete Indicator Usage Guide</h2>
+      <p data-i18n="indicators-subtitle">Every situation where you must use your turn signals, explained with clear examples</p>
+    </div>
+    <div class="indicators-grid">
+      <!-- Rendered by JS: renderIndicatorCards() -->
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     OVERTAKING GUIDE
+═══════════════════════════════════════════════════════════ -->
+<section class="overtake-section" id="overtaking">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Overtaking • ओभरटेकिङ</div>
+      <h2 data-i18n="overtake-title">How to Overtake Safely</h2>
+      <p data-i18n="overtake-subtitle">Step-by-step animated guide — Remember: in Nepal, you overtake from the RIGHT side</p>
+    </div>
+
+    <div class="overtake-inner">
+      <!-- Road animation -->
+      <div class="road-animation reveal">
+        <!-- Background trees/scenery -->
+        <div style="position:absolute;top:10px;left:20px;font-size:1.2rem;opacity:0.3;pointer-events:none;">🌲 🌲 🌲 🌲 🌲 🌲 🌲 🌲</div>
+        <div style="position:absolute;bottom:10px;left:20px;font-size:1.2rem;opacity:0.3;pointer-events:none;">🌳 🌳 🌳 🌳 🌳 🌳 🌳 🌳</div>
+        <!-- Road -->
+        <div class="road-top">
+          <div class="road-center-line" id="roadDashes"></div>
+        </div>
+        <!-- Cars -->
+        <div class="car-sprite car-ego" id="egoCar">
+          <span class="car-indicator-right" style="display:none;"></span>
+          <span class="car-indicator-left" style="display:none;"></span>
+        </div>
+        <div class="car-sprite car-front" id="frontCar"></div>
+        <div class="car-sprite car-oncoming" id="oncomingCar"></div>
+        <!-- Label -->
+        <div class="road-label" style="position:absolute;top:12px;left:50%;transform:translateX(-50%);font-size:0.75rem;color:rgba(255,255,255,0.6);white-space:nowrap;pointer-events:none;background:rgba(0,0,0,0.4);padding:4px 12px;border-radius:20px;"></div>
+      </div>
+
+      <!-- Controls -->
+      <div class="step-controls reveal">
+        <button class="step-btn step-prev" data-i18n="overtake-prev">← Previous Step</button>
+        <div class="step-progress">
+          <div class="step-dot active" data-step="0"></div>
+          <div class="step-dot" data-step="1"></div>
+          <div class="step-dot" data-step="2"></div>
+          <div class="step-dot" data-step="3"></div>
+          <div class="step-dot" data-step="4"></div>
+          <div class="step-dot" data-step="5"></div>
+          <div class="step-dot" data-step="6"></div>
+          <div class="step-dot" data-step="7"></div>
+          <div class="step-dot" data-step="8"></div>
+        </div>
+        <button class="step-btn step-next primary" data-i18n="overtake-next">Next Step →</button>
+      </div>
+
+      <div class="step-info reveal">
+        <div class="step-number">Step 1 / 9</div>
+        <h3>Step title</h3>
+        <p>Step description</p>
+      </div>
+
+      <button class="step-btn overtake-play-btn primary reveal" style="width:100%;margin-top:-1rem;margin-bottom:2rem;" data-i18n="overtake-play">▶ Play Animation</button>
+
+      <!-- Do NOT overtake -->
+      <div class="reveal" style="margin-top:2rem;">
+        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;">
+          <div style="width:40px;height:40px;border-radius:50%;background:rgba(220,20,60,0.2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">✕</div>
+          <h3 style="color:var(--white);" data-i18n="noovertake-title">When NOT to Overtake</h3>
+        </div>
+        <div class="no-overtake-grid">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     ROAD RULES
+═══════════════════════════════════════════════════════════ -->
+<section class="rules-section" id="rules">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Road Rules • सडक नियम</div>
+      <h2 data-i18n="rules-title">Nepal Road Rules</h2>
+      <p data-i18n="rules-subtitle">Essential traffic regulations you must know to drive legally and safely in Nepal</p>
+    </div>
+
+    <div class="rules-grid">
+      <div class="rule-card reveal">
+        <div class="rule-icon">◀</div>
+        <div>
+          <h3 data-i18n="rule-left-title">Drive on the Left Side</h3>
+          <p data-i18n="rule-left-desc">Nepal follows left-hand traffic. Always keep to the left side of the road.</p>
+        </div>
+      </div>
+      <div class="rule-card reveal">
+        <div class="rule-icon">🔒</div>
+        <div>
+          <h3 data-i18n="rule-seatbelt-title">Seat Belts Are Mandatory</h3>
+          <p data-i18n="rule-seatbelt-desc">All occupants must wear seat belts. Fine applies for non-compliance.</p>
+        </div>
+      </div>
+      <div class="rule-card reveal">
+        <div class="rule-icon">⛑</div>
+        <div>
+          <h3 data-i18n="rule-helmet-title">Helmet Required for Motorcycles</h3>
+          <p data-i18n="rule-helmet-desc">Both rider and pillion passenger must wear a proper certified helmet.</p>
+        </div>
+      </div>
+      <div class="rule-card reveal">
+        <div class="rule-icon">📵</div>
+        <div>
+          <h3 data-i18n="rule-phone-title">No Mobile Phone While Driving</h3>
+          <p data-i18n="rule-phone-desc">Using a mobile phone while driving (except hands-free) is illegal in Nepal.</p>
+        </div>
+      </div>
+      <div class="rule-card reveal">
+        <div class="rule-icon">🍺</div>
+        <div>
+          <h3 data-i18n="rule-alcohol-title">Blood Alcohol Limit: 0.03%</h3>
+          <p data-i18n="rule-alcohol-desc">Legal BAC limit is 0.03%. Driving under influence carries serious penalties.</p>
+        </div>
+      </div>
+      <div class="rule-card reveal">
+        <div class="rule-icon">🪪</div>
+        <div>
+          <h3 data-i18n="rule-license-title">Valid Licence Required</h3>
+          <p data-i18n="rule-license-desc">Always carry a valid driving licence. IDP is accepted for foreigners.</p>
+        </div>
+      </div>
+      <div class="rule-card reveal">
+        <div class="rule-icon">🚦</div>
+        <div>
+          <h3 data-i18n="rule-priority-title">Priority at Junctions</h3>
+          <p data-i18n="rule-priority-desc">Give way to vehicles on the right. Always follow traffic police signals above all signs.</p>
+        </div>
+      </div>
+      <div class="rule-card reveal">
+        <div class="rule-icon">📣</div>
+        <div>
+          <h3 data-i18n="rule-horn-title">Horn Usage</h3>
+          <p data-i18n="rule-horn-desc">Horns are used frequently in Nepal to warn others, especially on mountain roads.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mountain Rules -->
+    <div class="mountain-block reveal">
+      <div class="section-label" style="color:var(--gold);margin-bottom:0.5rem;">Mountain Roads • पहाडी सडक</div>
+      <h2 data-i18n="mountain-title">Mountain Road Rules</h2>
+      <p data-i18n="mountain-subtitle">Nepal's unique mountain highways require special knowledge and extra care</p>
+
+      <div class="mountain-grid" style="margin-top:2rem;">
+        <div class="mountain-card">
+          <div class="mtn-icon">⬆</div>
+          <div>
+            <h3 data-i18n="mtn-uphill-title">Uphill Vehicles Have Right of Way</h3>
+            <p data-i18n="mtn-uphill-desc">On single-lane mountain roads, vehicles going uphill have priority. Downhill must pull aside.</p>
+          </div>
+        </div>
+        <div class="mountain-card">
+          <div class="mtn-icon">📣</div>
+          <div>
+            <h3 data-i18n="mtn-horn-title">Horn Before Blind Corners</h3>
+            <p data-i18n="mtn-horn-desc">Always sound your horn before blind corners on mountain roads. Legally required.</p>
+          </div>
+        </div>
+        <div class="mountain-card">
+          <div class="mtn-icon">⚙</div>
+          <div>
+            <h3 data-i18n="mtn-gear-title">Use Low Gear on Descents</h3>
+            <p data-i18n="mtn-gear-desc">On steep descents, use engine braking (lower gear) instead of continuous braking.</p>
+          </div>
+        </div>
+        <div class="mountain-card">
+          <div class="mtn-icon">⇔</div>
+          <div>
+            <h3 data-i18n="mtn-edge-title">Uphill Vehicle Stays Center</h3>
+            <p data-i18n="mtn-edge-desc">On very narrow roads, uphill vehicle stays inside (mountain side), downhill moves to outer edge.</p>
+          </div>
+        </div>
+        <div class="mountain-card">
+          <div class="mtn-icon">🌙</div>
+          <div>
+            <h3 data-i18n="mtn-night-title">Extra Caution at Night</h3>
+            <p data-i18n="mtn-night-desc">Avoid mountain roads at night if possible. Use low beam in fog, go slow.</p>
+          </div>
+        </div>
+        <div class="mountain-card">
+          <div class="mtn-icon">🚫</div>
+          <div>
+            <h3 data-i18n="mtn-stop-title">Do Not Stop on Narrow Roads</h3>
+            <p data-i18n="mtn-stop-desc">Never stop on a narrow mountain road. If you must stop, pull left, use hazard lights.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     QUIZ
+═══════════════════════════════════════════════════════════ -->
+<section class="quiz-section" id="quiz">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Quiz • प्रश्नोत्तरी</div>
+      <h2 data-i18n="quiz-title">Test Your Knowledge</h2>
+      <p data-i18n="quiz-subtitle">How well do you know Nepal's traffic rules? Take the quiz to find out!</p>
+    </div>
+
+    <div class="quiz-box reveal">
+
+      <!-- Start screen -->
+      <div class="quiz-start-screen">
+        <div class="quiz-start-icon">🎯</div>
+        <h3 data-i18n="quiz-title">Test Your Knowledge</h3>
+        <p data-i18n="quiz-subtitle">How well do you know Nepal's traffic rules?</p>
+        <button class="btn btn-primary quiz-start-btn" data-i18n="quiz-start">Start Quiz</button>
+      </div>
+
+      <!-- Question screen -->
+      <div class="quiz-question-screen">
+        <div class="quiz-header">
+          <span class="quiz-counter">1 / 10</span>
+        </div>
+        <div class="quiz-progress-bar">
+          <div class="quiz-progress-fill" style="width:0%"></div>
+        </div>
+        <div class="quiz-question"></div>
+        <div class="quiz-options"></div>
+        <div class="quiz-explanation"></div>
+        <button class="quiz-next-btn" data-i18n="quiz-next">Next Question</button>
+      </div>
+
+      <!-- Results screen -->
+      <div class="quiz-results-screen">
+        <div class="quiz-score-circle">
+          <div class="quiz-score-text">
+            <span class="quiz-score-num">0/10</span>
+            <span class="quiz-score-label" data-i18n="quiz-score-label">Score</span>
+          </div>
+        </div>
+        <div class="quiz-result-msg"></div>
+        <p class="quiz-result-sub"></p>
+        <button class="btn btn-primary quiz-restart-btn" data-i18n="quiz-restart">Try Again</button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">🇳🇵 Traffic Guide Nepal</div>
+    <div class="footer-tagline" data-i18n="footer-tagline">Drive safely. Save lives.</div>
+    <div class="footer-divider"></div>
+    <p class="footer-note" data-i18n="footer-note">This guide is for educational purposes. Always refer to the Nepal Traffic Police and official Nepal Road Traffic regulations for the most current rules.</p>
+    <div class="footer-made" data-i18n="footer-made">Made with ❤️ for Nepal road safety</div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════════════════════════ -->
+<!-- GSAP core -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<!-- GSAP ScrollTrigger -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<!-- GSAP ScrollToPlugin -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+<!-- App scripts -->
+<script src="js/translations.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
